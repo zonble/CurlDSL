@@ -1,7 +1,30 @@
 import XCTest
+import Combine
 @testable import CurlDSL
 
 final class CurlDSLTests: XCTestCase {
+	func testPublisher() {
+
+		let exp = self.expectation(description: "POST")
+		do {
+			_ = try CURL("curl https://httpbin.org/json").run().receive(on: DispatchQueue.main).sink(receiveCompletion: { error in
+				exp.fulfill()
+			}, receiveValue: { data, response in
+				JsonDictionaryHandler { result in
+					switch result {
+					case .success(let dict):
+						XCTAssertNotNil(dict["slideshow"])
+					default:
+						break
+					}
+				}.handle(data, response, nil)
+			})
+			self.wait(for: [exp], timeout: 10)
+		} catch {
+			XCTFail()
+		}
+	}
+
 	func testAuth() {
 		let exp = self.expectation(description: "POST")
 		do {
@@ -22,7 +45,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail()
 		}
 	}
-	
+
 	func testPOST() {
 		let exp = self.expectation(description: "POST")
 		do {
@@ -42,7 +65,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail()
 		}
 	}
-	
+
 	func testPOST2() {
 		let exp = self.expectation(description: "POST")
 		do {
@@ -62,7 +85,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail("\(error)")
 		}
 	}
-	
+
 	func testPOSTJson() {
 		let exp = self.expectation(description: "POST")
 		do {
@@ -82,10 +105,10 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail("\(error)")
 		}
 	}
-	
+
 	func testGET() {
 		let exp = self.expectation(description: "GET")
-		
+
 		do {
 			let curl = try CURL("curl https://httpbin.org/json")
 			let handler = JsonDictionaryHandler { result in
@@ -103,7 +126,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail("\(error)")
 		}
 	}
-	
+
 	//    func testExample() {
 	//        // This is an example of a functional test case.
 	//        // Use XCTAssert and related functions to verify your tests produce the correct

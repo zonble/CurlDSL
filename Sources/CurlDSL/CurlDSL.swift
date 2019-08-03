@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public struct CURL {
 	private var result: ParseResult
@@ -46,5 +47,11 @@ public struct CURL {
 			handler.handle(data, response, error)
 		}
 		task.resume()
+	}
+
+	func run() -> URLSession.DataTaskPublisher {
+		let request = self.buildRequest()
+		let publisher = URLSession.shared.dataTaskPublisher(for: request)
+		return publisher
 	}
 }
