@@ -4,8 +4,14 @@ CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
 helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
 cURL command example for a Web API endpoint.
 
-CurlDSL is not a Swift code generator, but it parses and interprets your cURL
-command at run time.
+CurlDSL does not embed cURL library into your project. It is also not a Swift
+code generator, but it is a simple interpreter, it parses and interprets your
+cURL command at run time.
+
+The project is inspired by [cURL as DSL](https://github.com/shibukawa/curl_as_dsl) 
+by [Yoshiki Shibukawa](https://github.com/shibukawa).
+
+CurlDSL supports only HTTP and HTTPS right now.
 
 ## Requirement
 
@@ -58,6 +64,14 @@ following list.
    -u, --user=USER[:PASSWORD]              Server user and password
    -A, --user-agent=STRING                 User-Agent to send to server (H)
 ```
+
+## Built-in Response Handlers
+
+The package has several built-in handlers:
+
+- `JsonDictionaryHandler`: Decodes fetched JSON data into a dictionary.
+- `CodableHandler`: Decodes fetched JSON data into Codable objects.
+- `DataHandler`: Simply returns raw data.
 
 Pull requests are welcome.
 

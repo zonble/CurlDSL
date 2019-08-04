@@ -34,11 +34,10 @@ public struct CURL {
 		}
 		if let data = result.postData {
 			request.httpBody = data.data(using: .utf8)
-		}
-		else {
+		} else {
 			let joined = result.postFields.map { k, v in
 				"\(k.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")=\(v.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")"
-			}.joined(separator:"&")
+			}.joined(separator: "&")
 			request.httpBody = joined.data(using: .utf8)
 
 			// TODO: handle files and multi-part

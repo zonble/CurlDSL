@@ -4,7 +4,7 @@ public enum Option {
 	case url(String)
 	case data(String)
 	case form(_ key: String, _ value: String)
-	case header(_ key:String, _ value: String)
+	case header(_ key: String, _ value: String)
 	case referer(String)
 	case userAgent(String)
 	case user(_ user: String, _ password: String?)
@@ -51,8 +51,8 @@ struct ParseResult {
 	var password: String?
 	var postData: String?
 	var headers: [String: String]
-	var postFields: [String:String]
-	var files: [String:String]
+	var postFields: [String: String]
+	var files: [String: String]
 	var httpMethod: String
 }
 
@@ -63,13 +63,13 @@ public struct Parser {
 		self.command = command
 	}
 
-	static func slice(_ str: String)-> [String] {
+	static func slice(_ str: String) -> [String] {
 		var slices = [String]()
 		let scanner = Scanner(string: str)
 
 		func findQuote(_ str: String) -> (String.Index, String)? {
 			for i in str.indices {
-				switch str[i]  {
+				switch str[i] {
 				case "\"":
 					return (i, "\"")
 				case "\'":
@@ -107,8 +107,7 @@ public struct Parser {
 						}
 					}
 					scanner.charactersToBeSkipped = CharacterSet.whitespacesAndNewlines
-				}
-				else {
+				} else {
 					slices.append(result)
 				}
 			}
@@ -137,7 +136,7 @@ public struct Parser {
 		return tokens
 	}
 
-	static func convertTokensToOptions(_ tokens:[Token]) throws -> [Option] {
+	static func convertTokensToOptions(_ tokens: [Token]) throws -> [Option] {
 		switch tokens.first {
 		case .commandBegin: break
 		default: throw ParserError.invalidBegin
@@ -150,7 +149,7 @@ public struct Parser {
 		while index < tokens.count {
 			let token = tokens[index]
 			if case let Token.shortCommand(command) = token {
-				index+=1
+				index += 1
 				if index >= tokens.count {
 					throw ParserError.inValidParameter(command)
 				}
@@ -189,8 +188,7 @@ public struct Parser {
 				default:
 					throw ParserError.noSuchOption(command)
 				}
-			}
-			else if case let Token.longCommand(command) = token {
+			} else if case let Token.longCommand(command) = token {
 				let components = command.components(separatedBy: "=")
 				switch components[0] {
 				case "--data":
@@ -248,7 +246,7 @@ public struct Parser {
 			} else if case let Token.string(str) = token {
 				options.append(.url(str))
 			}
-			index+=1
+			index += 1
 		}
 		return options
 	}
@@ -259,8 +257,8 @@ public struct Parser {
 		var password: String?
 		var postData: String?
 		var headers: [String: String] = [:]
-		var postFields: [String:String] = [:]
-		var files: [String:String] = [:]
+		var postFields: [String: String] = [:]
+		var files: [String: String] = [:]
 		var httpMethod: String?
 
 		for option in options {
@@ -314,7 +312,7 @@ public struct Parser {
 			let pattern = "https?://(.*)@(.*)"
 			let regex = try NSRegularExpression(pattern: pattern, options: [])
 			let matches = regex.matches(in: url, options: [], range: NSMakeRange(0, url.count))
-			if  matches.count > 0 {
+			if matches.count > 0 {
 				let usernameRange = matches[0].range(at: 1)
 				let start = url.index(url.startIndex, offsetBy: usernameRange.location)
 				let end = url.index(url.startIndex, offsetBy: usernameRange.location + usernameRange.length)
