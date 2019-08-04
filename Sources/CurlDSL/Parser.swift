@@ -38,15 +38,8 @@ public enum ParserError: Error, LocalizedError {
 	}
 }
 
-enum Token {
-	case commandBegin
-	case shortCommand(String)
-	case longCommand(String)
-	case string(String)
-}
-
 struct Lexer {
-	static func slice(_ str: String) -> [String] {
+	static func tokenize(_ str: String) -> [String] {
 		var slices = [String]()
 		let scanner = Scanner(string: str)
 
@@ -103,30 +96,96 @@ struct Lexer {
 		return slices
 	}
 
-	static func tokenize(_ slices: [String]) -> [Token] {
-		var tokens = [Token]()
-
-		for (i, slice) in slices.enumerated() {
-			if i == 0 && slice == "curl" {
-				tokens.append(.commandBegin)
-				continue
+	fileprivate static func handleShortCommands(_ tokens: [String], _ index: Int, _ token: String, _ options: inout [Option]) throws {
+		let nextToken = tokens[index]
+		switch token {
+		case "-d":
+			options.append(.data(nextToken))
+		case "-F":
+			let components = nextToken.components(separatedBy: "=")
+			if components.count < 2 {
+				throw ParserError.inValidParameter(token)
 			}
-			if slice.hasPrefix("--") {
-				tokens.append(.longCommand(slice))
-				continue
+			options.append(.form(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1]))
+		case "-H":
+			let components = nextToken.components(separatedBy: ":")
+			if components.count < 2 {
+				throw ParserError.inValidParameter(token)
 			}
-			if slice.hasPrefix("-") {
-				tokens.append(.shortCommand(slice))
-				continue
+			options.append(.header(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)))
+		case "-e":
+			options.append(.referer(nextToken))
+		case "-A":
+			options.append(.userAgent(nextToken))
+		case "-X":
+			options.append(.requestMethod(nextToken))
+		case "-u":
+			let components = nextToken.components(separatedBy: ":")
+			if components.count >= 2 {
+				options.append(.user(components[0], components[1]))
+			} else {
+				options.append(.user(components[0], nil))
 			}
-			tokens.append(.string(slice))
+		default:
+			throw ParserError.noSuchOption(token)
 		}
-		return tokens
 	}
 
-	static func convertTokensToOptions(_ tokens: [Token]) throws -> [Option] {
+	fileprivate static func handleLongCommands(_ token: String, _ options: inout [Option]) throws {
+		let components = token.components(separatedBy: "=")
+		switch components[0] {
+		case "--data":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.data(components[1]))
+		case "--form", "-form-string":
+			if components.count < 3 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.form(components[1], components[2]))
+		case "--header":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			let keyValue = components[1].components(separatedBy: ":")
+			if keyValue.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.header(keyValue[0], keyValue[1]))
+		case "--referer":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.referer(components[1]))
+		case "--user-agent":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.userAgent(components[1]))
+		case "--request":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			options.append(.requestMethod(components[1]))
+		case "--user":
+			if components.count < 2 {
+				throw ParserError.inValidParameter(components[0])
+			}
+			let userPassword = components[1].components(separatedBy: ":")
+			if userPassword.count >= 2 {
+				options.append(.user(userPassword[0], userPassword[1]))
+			} else {
+				options.append(.user(userPassword[0], nil))
+			}
+		default:
+			throw ParserError.noSuchOption(components[0])
+		}
+	}
+
+	static func convertTokensToOptions(_ tokens: [String]) throws -> [Option] {
 		switch tokens.first {
-		case .commandBegin: break
+		case "curl": break
 		default: throw ParserError.invalidBegin
 		}
 		if tokens.count < 2 {
@@ -136,99 +195,17 @@ struct Lexer {
 		var index = 1
 		while index < tokens.count {
 			let token = tokens[index]
-			if case let Token.shortCommand(command) = token {
+			if token.hasPrefix("--") {
+				try handleLongCommands(token, &options)
+			}
+			else if token.hasPrefix("-") {
 				index += 1
 				if index >= tokens.count {
-					throw ParserError.inValidParameter(command)
+					throw ParserError.inValidParameter(token)
 				}
-				let nextToken = tokens[index]
-				guard case let Token.string(str) = nextToken else {
-					throw ParserError.inValidParameter(command)
-				}
-				switch command {
-				case "-d":
-					options.append(.data(str))
-				case "-F":
-					let components = str.components(separatedBy: "=")
-					if components.count < 2 {
-						throw ParserError.inValidParameter(command)
-					}
-					options.append(.form(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1]))
-				case "-H":
-					let components = str.components(separatedBy: ":")
-					if components.count < 2 {
-						throw ParserError.inValidParameter(command)
-					}
-					options.append(.header(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)))
-				case "-e":
-					options.append(.referer(str))
-				case "-A":
-					options.append(.userAgent(str))
-				case "-X":
-					options.append(.requestMethod(str))
-				case "-u":
-					let components = str.components(separatedBy: ":")
-					if components.count >= 2 {
-						options.append(.user(components[0], components[1]))
-					} else {
-						options.append(.user(components[0], nil))
-					}
-				default:
-					throw ParserError.noSuchOption(command)
-				}
-			} else if case let Token.longCommand(command) = token {
-				let components = command.components(separatedBy: "=")
-				switch components[0] {
-				case "--data":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.data(components[1]))
-				case "--form", "-form-string":
-					if components.count < 3 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.form(components[1], components[2]))
-				case "--header":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					let keyValue = components[1].components(separatedBy: ":")
-					if keyValue.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.header(keyValue[0], keyValue[1]))
-				case "--referer":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.referer(components[1]))
-				case "--user-agent":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.userAgent(components[1]))
-				case "--request":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.requestMethod(components[1]))
-				case "--user":
-					if components.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					let userPassword = components[1].components(separatedBy: ":")
-					if userPassword.count >= 2 {
-						options.append(.user(userPassword[0], userPassword[1]))
-					} else {
-						options.append(.user(userPassword[0], nil))
-					}
-				default:
-					throw ParserError.noSuchOption(components[0])
-				}
-
-			} else if case let Token.string(str) = token {
-				options.append(.url(str))
+				try handleShortCommands(tokens, index, token, &options)
+			}  else {
+				options.append(.url(token))
 			}
 			index += 1
 		}
@@ -341,9 +318,8 @@ struct Parser {
 
 	func parse() throws -> ParseResult {
 		let command = self.command.trimmingCharacters(in: CharacterSet.whitespaces)
-		let slices = Lexer.slice(command)
-		let tokens = Lexer.tokenize(slices)
-		let options = try Lexer.convertTokensToOptions(tokens)
+		let slices = Lexer.tokenize(command)
+		let options = try Lexer.convertTokensToOptions(slices)
 		let result = try Parser.compile(options)
 		return result
 	}

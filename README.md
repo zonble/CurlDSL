@@ -1,5 +1,7 @@
 # CurlDSL
 
+2019 © Weizhong Yang a.k.a zonble
+
 CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
 helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
 cURL command example for a Web API endpoint.
@@ -72,6 +74,10 @@ The package has several built-in handlers:
 - `JsonDictionaryHandler`: Decodes fetched JSON data into a dictionary.
 - `CodableHandler`: Decodes fetched JSON data into Codable objects.
 - `DataHandler`: Simply returns raw data.
+
+## License
+
+The package is released under MIT license.
 
 Pull requests are welcome.
 

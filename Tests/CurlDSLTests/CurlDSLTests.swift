@@ -3,6 +3,17 @@ import Combine
 @testable import CurlDSL
 
 final class CurlDSLTests: XCTestCase {
+
+	func testInvliadURL() {
+		do {
+			_ = try CURL("curl taliyugatalimba")
+			XCTFail()
+		} catch ParserError.invalidURL {
+		} catch {
+			XCTFail()
+		}
+	}
+
 	func testPublisher() {
 
 		let exp = self.expectation(description: "POST")

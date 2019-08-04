@@ -5,10 +5,9 @@ final class LexerptionsTests: XCTestCase {
 
 	func testOptions1() {
 		let str = ""
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(tokens)
+			_ = try Lexer.convertTokensToOptions(result)
 			XCTFail()
 		} catch ParserError.invalidBegin {
 		} catch {
@@ -18,10 +17,9 @@ final class LexerptionsTests: XCTestCase {
 
 	func testOptions1_1() {
 		let str = " curl "
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(tokens)
+			_ = try Lexer.convertTokensToOptions(result)
 			XCTFail()
 		} catch ParserError.noURL {
 		} catch {
@@ -31,10 +29,9 @@ final class LexerptionsTests: XCTestCase {
 
 	func testOptions2() {
 		let str = "curl \"https://kkbox.com\""
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			let options = try Lexer.convertTokensToOptions(tokens)
+			let options = try Lexer.convertTokensToOptions(result)
 			switch options[0] {
 			case .url(let url):
 				XCTAssert(url == "https://kkbox.com")
@@ -48,10 +45,9 @@ final class LexerptionsTests: XCTestCase {
 
 	func testInvalidOption1() {
 		let str = "curl -F -F"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(tokens)
+			_ = try Lexer.convertTokensToOptions(result)
 			XCTFail()
 		} catch ParserError.inValidParameter {
 		} catch {
@@ -61,10 +57,9 @@ final class LexerptionsTests: XCTestCase {
 
 	func testInvalidOption2() {
 		let str = "curl -F"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(tokens)
+			_ = try Lexer.convertTokensToOptions(result)
 			XCTFail()
 		} catch ParserError.inValidParameter {
 		} catch {
@@ -74,216 +69,105 @@ final class LexerptionsTests: XCTestCase {
 
 	func testInvalidOption3() {
 		let str = "curl --form --form"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
+		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(tokens)
+			_ = try Lexer.convertTokensToOptions(result)
 			XCTFail()
 		} catch ParserError.inValidParameter {
 		} catch {
 			XCTFail()
 		}
 	}
-
 }
 
 final class LexerTokenizingTests: XCTestCase {
-
-	func testMultiLines() {
-		let str = """
-curl
-http://kkbox.com
-"""
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
-		switch tokens[0] {
-		case Token.commandBegin:
-			break
-		default:
-			XCTFail()
-		}
-		switch tokens[1] {
-		case Token.string(let str):
-			XCTAssert(str == "http://kkbox.com")
-		default:
-			XCTFail()
-		}
-	}
-
 	func testTokenize1() {
 		let str = "curl"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
-		switch tokens.first! {
-		case Token.commandBegin:
-			break
-		default:
-			XCTFail()
-		}
-	}
-
-	func testTokenize2() {
-		let str = "curl http://kkbox.com"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
-		switch tokens[0] {
-		case Token.commandBegin:
-			break
-		default:
-			XCTFail()
-		}
-		switch tokens[1] {
-		case Token.string(let str):
-			XCTAssert(str == "http://kkbox.com")
-		default:
-			XCTFail()
-		}
-	}
-
-	func testTokenize3() {
-		let str = "curl -F x=x http://kkbox.com"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
-		switch tokens[0] {
-		case Token.commandBegin:
-			break
-		default:
-			XCTFail()
-		}
-		switch tokens[1] {
-		case Token.shortCommand(let str):
-			XCTAssert(str == "-F")
-		default:
-			XCTFail("\(tokens[1])")
-		}
-		switch tokens[2] {
-		case Token.string(let str):
-			XCTAssert(str == "x=x")
-		default:
-			XCTFail("\(tokens[2])")
-		}
-		switch tokens[3] {
-		case Token.string(let str):
-			XCTAssert(str == "http://kkbox.com")
-		default:
-			XCTFail()
-		}
-	}
-
-	func testTokenize4() {
-		let str = "curl --form=x=x http://kkbox.com"
-		let result = Lexer.slice(str)
-		let tokens = Lexer.tokenize(result)
-		switch tokens[0] {
-		case Token.commandBegin:
-			break
-		default:
-			XCTFail()
-		}
-		switch tokens[1] {
-		case Token.longCommand(let str):
-			XCTAssert(str == "--form=x=x")
-		default:
-			XCTFail("\(tokens[1])")
-		}
-		switch tokens[2] {
-		case Token.string(let str):
-			XCTAssert(str == "http://kkbox.com")
-		default:
-			XCTFail()
-		}
-	}
-
-}
-
-final class LexerSlicingTests: XCTestCase {
-	func testSlice1() {
-		let str = "curl"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl"])
 	}
 
-	func testSlice2() {
+	func testTokenize2() {
 		let str = ""
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == [])
 	}
 
-	func testSlice3() {
+	func testTokenize3() {
 		let str = "  "
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == [])
 	}
 
-	func testSlice4() {
+	func testTokenize4() {
 		let str = "curl http://kkbox.com"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"])
 	}
 
-	func testSlice5() {
+	func testTokenize5() {
 		let str = "curl \"http://kkbox.com\""
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice5_1() {
+	func testTokenize5_1() {
 		let str = "curl \'http://kkbox.com\'"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice6() {
+	func testTokenize6() {
 		let str = "curl http\"://kkbox.com\""
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice6_1() {
+	func testTokenize6_1() {
 		let str = "curl http\'://kkbox.com\'"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice7() {
+	func testTokenize7() {
 		let str = "curl http\"  ://kkbox.com  \""
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http  ://kkbox.com  "], "\(result)")
 	}
 
-	func testSlice7_1() {
+	func testTokenize7_1() {
 		let str = "curl http\'  ://kkbox.com  \'"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http  ://kkbox.com  "], "\(result)")
 	}
 
-	func testSlice8() {
+	func testTokenize8() {
 		let str = "curl \"  \'http://kkbox.com\'  \""
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "  \'http://kkbox.com\'  "], "\(result)")
 	}
 
-	func testSlice8_1() {
+	func testTokenize8_1() {
 		let str = "curl \'  \"http://kkbox.com\"  \'"
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "  \"http://kkbox.com\"  "], "\(result)")
 	}
 
-	func testSlice9() {
+	func testTokenize9() {
 		let str = #"curl -F "{ \"name\"=\"name\" }" "http://kkbox.com""#
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "-F", "{ \"name\"=\"name\" }", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice10() {
+	func testTokenize10() {
 		let str = #"curl "http://kkbox.com"#
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
-	func testSlice11() {
+	func testTokenize11() {
 		let str = #"curl http://kkbox.com""#
-		let result = Lexer.slice(str)
+		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
 
