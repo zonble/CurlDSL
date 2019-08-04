@@ -25,6 +25,27 @@ final class CurlDSLTests: XCTestCase {
 		}
 	}
 
+	func testAuth2() {
+		let exp = self.expectation(description: "POST")
+		do {
+			let curl = try CURL("curl -X GET \"https://user:password@httpbin.org/basic-auth/user/password\" -H \"accept: application/json\"")
+			let handler = JsonDictionaryHandler { result in
+				exp.fulfill()
+				switch result {
+				case .success(let dict):
+					XCTAssertTrue(dict["user"] as? String == "user")
+					XCTAssertTrue(dict["authenticated"] as? Int == 1)
+				case .failure(_):
+					XCTFail()
+				}
+			}
+			curl.run(handler: handler)
+			self.wait(for: [exp], timeout: 10)
+		} catch {
+			XCTFail()
+		}
+	}
+
 	func testAuth() {
 		let exp = self.expectation(description: "POST")
 		do {

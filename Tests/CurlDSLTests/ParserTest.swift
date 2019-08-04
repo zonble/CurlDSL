@@ -7,7 +7,7 @@ final class ParserOptionsTests: XCTestCase {
 		let result = Parser.slice(str)
 		let tokens = Parser.tokenize(result)
 		do {
-			_ = try Parser.convertToOptions(tokens)
+			_ = try Parser.convertTokensToOptions(tokens)
 			XCTFail()
 		} catch ParserError.invalidBegin {
 		} catch {
@@ -20,7 +20,7 @@ final class ParserOptionsTests: XCTestCase {
 		let result = Parser.slice(str)
 		let tokens = Parser.tokenize(result)
 		do {
-			_ = try Parser.convertToOptions(tokens)
+			_ = try Parser.convertTokensToOptions(tokens)
 			XCTFail()
 		} catch ParserError.noURL {
 		} catch {
@@ -33,7 +33,7 @@ final class ParserOptionsTests: XCTestCase {
 		let result = Parser.slice(str)
 		let tokens = Parser.tokenize(result)
 		do {
-			let options = try Parser.convertToOptions(tokens)
+			let options = try Parser.convertTokensToOptions(tokens)
 			switch options[0] {
 			case .url(let url):
 				XCTAssert(url == "https://kkbox.com")

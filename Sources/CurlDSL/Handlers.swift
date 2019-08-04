@@ -17,12 +17,18 @@ public class Handler<T> {
 	}
 }
 
+/// A handler that coverts JSON response into cadable objects.
 public class CodableHandler<T:Codable>: Handler<T> {
+	/// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
 	public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
+	/// The strategy to use in decoding dates. Defaults to `.deferredToDate`.
 	public var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate
-	public var dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .deferredToData
+    /// The strategy to use in decoding binary data. Defaults to `.base64`.
+	public var dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64
+    /// The strategy to use in decoding non-conforming numbers. Defaults to `.throw`.
 	public var nonConformingFloatDecodingStrategy: JSONDecoder.NonConformingFloatDecodingStrategy = .throw
 
+	/// :nodoc:
 	public override func handle(_ data: Data?, _ response: URLResponse?, _ apiError: Error?) {
 		if let apiError = apiError {
 			DispatchQueue.main.async {
@@ -55,7 +61,9 @@ public class CodableHandler<T:Codable>: Handler<T> {
 	}
 }
 
+/// A handler that returns the raw data.
 public class DataHandler: Handler <Data> {
+	/// :nodoc:
 	public override func handle(_ data: Data?, _ response: URLResponse?, _ apiError: Error?) {
 		if let apiError = apiError {
 			DispatchQueue.main.async {
@@ -75,7 +83,9 @@ public class DataHandler: Handler <Data> {
 	}
 }
 
+/// A handler that coverts JSON response into a dictionary.
 public class JsonDictionaryHandler: Handler <[AnyHashable:Any]> {
+	/// :nodoc:
 	public override func handle(_ data: Data?, _ response: URLResponse?, _ apiError: Error?) {
 		if let apiError = apiError {
 			DispatchQueue.main.async {

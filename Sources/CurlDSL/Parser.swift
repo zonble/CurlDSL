@@ -1,30 +1,48 @@
 import Foundation
 
-enum Token {
-	case commandBegin
-	case shortCommand(String)
-	case longCommand(String)
-	case string(String)
-}
-
 public enum Option {
 	case url(String)
 	case data(String)
-	case form(String, String)
-	case header(String, String)
+	case form(_ key: String, _ value: String)
+	case header(_ key:String, _ value: String)
 	case referer(String)
 	case userAgent(String)
-	case user(String, String?)
+	case user(_ user: String, _ password: String?)
 	case requestMethod(String)
 }
 
-public enum ParserError: Error {
+/// Errors for `Parser`.
+public enum ParserError: Error, LocalizedError {
 	case invalidBegin
 	case noURL
 	case invalidURL
 	case noSuchOption(String)
 	case inValidParameter(String)
 	case otherSyntaxError
+
+	public var errorDescription: String? {
+		switch self {
+		case .invalidBegin:
+			return #"Your command should start with "curl""#
+		case .noURL:
+			return #"You did not specific a URL in your command."#
+		case .invalidURL:
+			return #"The URL is invalid. We suppports only http and https protocol right now."#
+		case .noSuchOption(let option):
+			return "\(option) is not supported."
+		case .inValidParameter(let option):
+			return "The parameter for \(option) is not supported."
+		default:
+			return nil
+		}
+	}
+}
+
+enum Token {
+	case commandBegin
+	case shortCommand(String)
+	case longCommand(String)
+	case string(String)
 }
 
 struct ParseResult {
@@ -38,7 +56,7 @@ struct ParseResult {
 	var httpMethod: String
 }
 
-struct Parser {
+public struct Parser {
 	public private(set) var command: String
 
 	public init(command: String) {
@@ -119,7 +137,7 @@ struct Parser {
 		return tokens
 	}
 
-	static func convertToOptions(_ tokens:[Token]) throws -> [Option] {
+	static func convertTokensToOptions(_ tokens:[Token]) throws -> [Option] {
 		switch tokens.first {
 		case .commandBegin: break
 		default: throw ParserError.invalidBegin
@@ -271,10 +289,6 @@ struct Parser {
 			}
 		}
 
-		// Do it later
-//		if user == nil {
-//		}
-
 		let finalHTTPMethod: String = {
 			if let httpMethod = httpMethod {
 				return httpMethod
@@ -292,9 +306,31 @@ struct Parser {
 		}()
 
 		url = url.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-		if !url.hasPrefix("https://") {
+		if !url.hasPrefix("https://") && !url.hasPrefix("http://") {
 			throw ParserError.invalidURL
 		}
+
+		do {
+			let pattern = "https?://(.*)@(.*)"
+			let regex = try NSRegularExpression(pattern: pattern, options: [])
+			let matches = regex.matches(in: url, options: [], range: NSMakeRange(0, url.count))
+			if  matches.count > 0 {
+				let usernameRange = matches[0].range(at: 1)
+				let start = url.index(url.startIndex, offsetBy: usernameRange.location)
+				let end = url.index(url.startIndex, offsetBy: usernameRange.location + usernameRange.length)
+				let substring = url[start..<end]
+				let components = substring.components(separatedBy: ":")
+				if user == nil {
+					user = components[0]
+					if components.count >= 2 {
+						password = components[1]
+					}
+				}
+				url.removeSubrange(start...end)
+			}
+		} catch {
+		}
+
 		guard let finalUrl = URL(string: url) else {
 			throw ParserError.invalidURL
 		}
@@ -306,7 +342,7 @@ struct Parser {
 		let command = self.command.trimmingCharacters(in: CharacterSet.whitespaces)
 		let slices = Parser.slice(command)
 		let tokens = Parser.tokenize(slices)
-		let options = try Parser.convertToOptions(tokens)
+		let options = try Parser.convertTokensToOptions(tokens)
 		let result = try Parser.compile(options)
 		return result
 	}
