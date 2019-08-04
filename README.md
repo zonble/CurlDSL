@@ -38,3 +38,23 @@ try CURL("https://httpbin.org/json").run { data, response, error in
 }
 ```
 
+## Supported Options
+
+We do not support all of options of cURL. The supported options are as the
+following list.
+
+``` text
+   -d, --data=DATA                         HTTP POST data (H)
+   -F, --form=KEY=VALUE                    Specify HTTP multipart POST data (H)
+       --form-string=KEY=VALUE             Specify HTTP multipart POST data (H)
+   -G, --get                               Send the -d data with a HTTP GET (H)
+   -H, --header=LINE                       Pass custom header LINE to server (H)
+   -e, --referer=                          Referer URL (H)
+   -X, --request=COMMAND                   Specify request command to use
+       --url=URL                           URL to work with
+   -u, --user=USER[:PASSWORD]              Server user and password
+   -A, --user-agent=STRING                 User-Agent to send to server (H)
+```
+
+
+Enjoy!
