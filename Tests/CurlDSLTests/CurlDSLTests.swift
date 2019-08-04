@@ -117,7 +117,27 @@ final class CurlDSLTests: XCTestCase {
 				exp.fulfill()
 				switch result {
 				case .success(let dict):
-					XCTAssert((dict["form"] as? [AnyHashable:Any])?["message"] as? String == "I like it", "\(String(describing: dict["form"]))")
+					XCTAssert((dict["form"] as? [AnyHashable:Any])?["message"] as? String == " I like it ", "\(String(describing: dict["form"]))")
+				case .failure(_):
+					XCTFail()
+				}
+			}
+			curl.run(handler: handler)
+			self.wait(for: [exp], timeout: 10)
+		} catch  {
+			XCTFail("\(error)")
+		}
+	}
+
+	func testPOST3() {
+		let exp = self.expectation(description: "POST")
+		do {
+			let curl = try CURL("curl --form=message=\" I like it \" -X POST --header=\"Accept: application/json\" https://httpbin.org/post")
+			let handler = JsonDictionaryHandler { result in
+				exp.fulfill()
+				switch result {
+				case .success(let dict):
+					XCTAssert((dict["form"] as? [AnyHashable:Any])?["message"] as? String == " I like it ", "\(String(describing: dict["form"]))")
 				case .failure(_):
 					XCTFail()
 				}
@@ -158,15 +178,14 @@ curl -d "{
 \"k\"=\"v\"
 }"
 -H "Content-Type: application/json"
--X POST
 -H "Accept: application/json"
+-A CurlDSL
 "https://httpbin.org/post"
 """#)
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
 				case .success(let dict):
-					print("\(dict["data"] as? String)")
 					XCTAssertTrue(dict["data"] as? String ==
 """
 {

@@ -153,7 +153,7 @@ struct Lexer {
 					if components.count < 2 {
 						throw ParserError.inValidParameter(command)
 					}
-					options.append(.form(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)))
+					options.append(.form(components[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), components[1]))
 				case "-H":
 					let components = str.components(separatedBy: ":")
 					if components.count < 2 {
@@ -185,14 +185,10 @@ struct Lexer {
 					}
 					options.append(.data(components[1]))
 				case "--form", "-form-string":
-					if components.count < 2 {
+					if components.count < 3 {
 						throw ParserError.inValidParameter(components[0])
 					}
-					let keyValue = components[1].components(separatedBy: "=")
-					if keyValue.count < 2 {
-						throw ParserError.inValidParameter(components[0])
-					}
-					options.append(.form(keyValue[0], keyValue[1]))
+					options.append(.form(components[1], components[2]))
 				case "--header":
 					if components.count < 2 {
 						throw ParserError.inValidParameter(components[0])
@@ -228,7 +224,7 @@ struct Lexer {
 						options.append(.user(userPassword[0], nil))
 					}
 				default:
-					throw ParserError.noSuchOption(components[1])
+					throw ParserError.noSuchOption(components[0])
 				}
 
 			} else if case let Token.string(str) = token {
