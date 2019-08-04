@@ -25,10 +25,10 @@ final class CurlDSLTests: XCTestCase {
 		}
 	}
 
-	func testAuth2() {
+	func testAuth1() {
 		let exp = self.expectation(description: "POST")
 		do {
-			let curl = try CURL("curl -X GET \"https://user:password@httpbin.org/basic-auth/user/password\" -H \"accept: application/json\"")
+			let curl = try CURL("curl --user=user:password -X GET \"https://httpbin.org/basic-auth/user/password\" -H \"Accept: application/json\"")
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
@@ -46,10 +46,31 @@ final class CurlDSLTests: XCTestCase {
 		}
 	}
 
-	func testAuth() {
+	func testAuth2() {
 		let exp = self.expectation(description: "POST")
 		do {
-			let curl = try CURL("curl -u user:password -X GET \"https://httpbin.org/basic-auth/user/password\" -H \"accept: application/json\"")
+			let curl = try CURL("curl -X GET \"https://user:password@httpbin.org/basic-auth/user/password\" -H \"Accept: application/json\"")
+			let handler = JsonDictionaryHandler { result in
+				exp.fulfill()
+				switch result {
+				case .success(let dict):
+					XCTAssertTrue(dict["user"] as? String == "user")
+					XCTAssertTrue(dict["authenticated"] as? Int == 1)
+				case .failure(_):
+					XCTFail()
+				}
+			}
+			curl.run(handler: handler)
+			self.wait(for: [exp], timeout: 10)
+		} catch {
+			XCTFail()
+		}
+	}
+
+	func testAuth3() {
+		let exp = self.expectation(description: "POST")
+		do {
+			let curl = try CURL("curl -u user:password -X GET \"https://httpbin.org/basic-auth/user/password\" -H \"Accept: application/json\"")
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
@@ -70,12 +91,13 @@ final class CurlDSLTests: XCTestCase {
 	func testPOST() {
 		let exp = self.expectation(description: "POST")
 		do {
-			let curl = try CURL("curl -F k=v -X POST -H \"accept: application/json\" https://httpbin.org/post")
+			let curl = try CURL("curl -e http://zonble.net -F k=v -X POST -H \"Accept: application/json\" https://httpbin.org/post")
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
 				case .success(let dict):
 					XCTAssert((dict["form"] as? [AnyHashable:Any])?["k"] as? String == "v")
+					XCTAssert((dict["headers"] as? [AnyHashable:Any])?["Referer"] as? String == "http://zonble.net")
 				case .failure(_):
 					XCTFail()
 				}
@@ -90,7 +112,7 @@ final class CurlDSLTests: XCTestCase {
 	func testPOST2() {
 		let exp = self.expectation(description: "POST")
 		do {
-			let curl = try CURL("curl -F message=\" I like it \" -X POST -H \"accept: application/json\" https://httpbin.org/post")
+			let curl = try CURL("curl -F message=\" I like it \" -X POST -H \"Accept: application/json\" https://httpbin.org/post")
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
@@ -110,12 +132,48 @@ final class CurlDSLTests: XCTestCase {
 	func testPOSTJson() {
 		let exp = self.expectation(description: "POST")
 		do {
-			let curl = try CURL(#"curl -d "{ \"k\"=\"v\" }" -H "Content-Type: application/json" -X POST -H "accept: application/json" https://httpbin.org/post"#)
+			let curl = try CURL(#"curl -d "{ \"k\"=\"v\" }" -H "Content-Type: application/json" -X POST -H "Accept: application/json" https://httpbin.org/post"#)
 			let handler = JsonDictionaryHandler { result in
 				exp.fulfill()
 				switch result {
 				case .success(let dict):
 					XCTAssertTrue(dict["data"] as? String == #"{ "k"="v" }"#)
+				case .failure(_):
+					XCTFail()
+				}
+			}
+			curl.run(handler: handler)
+			self.wait(for: [exp], timeout: 10)
+		} catch  {
+			XCTFail("\(error)")
+		}
+	}
+
+	func testPOSTJson2() {
+		let exp = self.expectation(description: "POST")
+		do {
+			let curl = try CURL(
+#"""
+curl -d "{
+\"k\"=\"v\"
+}"
+-H "Content-Type: application/json"
+-X POST
+-H "Accept: application/json"
+"https://httpbin.org/post"
+"""#)
+			let handler = JsonDictionaryHandler { result in
+				exp.fulfill()
+				switch result {
+				case .success(let dict):
+					print("\(dict["data"] as? String)")
+					XCTAssertTrue(dict["data"] as? String ==
+"""
+{
+\"k\"=\"v\"
+}
+"""
+						, dict["data"] as? String ?? "")
 				case .failure(_):
 					XCTFail()
 				}

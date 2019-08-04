@@ -15,7 +15,7 @@ public enum Option {
 public enum ParserError: Error, LocalizedError {
 	case invalidBegin
 	case noURL
-	case invalidURL
+	case invalidURL(String)
 	case noSuchOption(String)
 	case inValidParameter(String)
 	case otherSyntaxError
@@ -23,11 +23,11 @@ public enum ParserError: Error, LocalizedError {
 	public var errorDescription: String? {
 		switch self {
 		case .invalidBegin:
-			return #"Your command should start with "curl""#
+			return "Your command should start with \"curl\"."
 		case .noURL:
-			return #"You did not specific a URL in your command."#
-		case .invalidURL:
-			return #"The URL is invalid. We suppports only http and https protocol right now."#
+			return "You did not specific a URL in your command."
+		case .invalidURL(let url):
+			return "The URL \(url) is invalid. We suppports only http and https protocol right now."
 		case .noSuchOption(let option):
 			return "\(option) is not supported."
 		case .inValidParameter(let option):
@@ -45,70 +45,57 @@ enum Token {
 	case string(String)
 }
 
-struct ParseResult {
-	var url: URL
-	var user: String?
-	var password: String?
-	var postData: String?
-	var headers: [String: String]
-	var postFields: [String: String]
-	var files: [String: String]
-	var httpMethod: String
-}
-
-public struct Parser {
-	public private(set) var command: String
-
-	public init(command: String) {
-		self.command = command
-	}
-
-	static func findQuote(_ str: String) -> (String.Index, String)? {
-		let quoteScanner = Scanner(string: str)
-		quoteScanner.charactersToBeSkipped = nil
-		quoteScanner.currentIndex = str.startIndex
-		if quoteScanner.scanUpToCharacters(from: CharacterSet(charactersIn: "\"\'")) != nil {
-			if quoteScanner.isAtEnd {
-				return nil
-			}
-			let index = quoteScanner.currentIndex
-			let quote = String(str[index])
-			return (index, quote)
-		}
-		return (str.startIndex, String(str[str.startIndex]))
-	}
-
+struct Lexer {
 	static func slice(_ str: String) -> [String] {
 		var slices = [String]()
 		let scanner = Scanner(string: str)
 
 		while scanner.isAtEnd == false {
-			if let result = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " \n") ) {
-				if let (index, quote) = findQuote(result) {
-					let beforeQuote = result[result.startIndex..<index]
-					var buffer = String(beforeQuote)
-					let offset = (result.count - result.distance(from: result.startIndex, to: index) - 1) * -1
-					scanner.currentIndex = str.index(scanner.currentIndex, offsetBy: offset)
-					scanner.charactersToBeSkipped = nil
-					while true {
-						if let scannedString = scanner.scanUpToString(quote) {
-							buffer.append(scannedString)
-							if scanner.isAtEnd {
-								slices.append(buffer)
-								break
-							}
-							scanner.currentIndex = str.index(scanner.currentIndex, offsetBy: 1)
-							if scannedString[scannedString.index(before: scannedString.endIndex)] != "\\" {
-								slices.append(buffer)
-								break
-							} else {
-								buffer.remove(at: buffer.index(before: buffer.endIndex))
-								buffer.append(quote)
-							}
+			let result = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " \n\"\'") )
+			if result == nil {
+				scanner.currentIndex = str.index(after: scanner.currentIndex)
+			}
+			if scanner.isAtEnd {
+				if let result = result {
+					slices.append(result)
+				}
+				break
+			}
+
+			let lastChar = String(str[scanner.currentIndex])
+
+			if lastChar == "\"" || lastChar == "\'" {
+				let quote = lastChar
+				var buffer = result ?? ""
+				scanner.charactersToBeSkipped = nil
+				scanner.currentIndex = str.index(after: scanner.currentIndex)
+				while true {
+					if let scannedString = scanner.scanUpToString(quote) {
+						buffer.append(scannedString)
+						if scanner.isAtEnd {
+							slices.append(buffer)
+							break
 						}
+						scanner.currentIndex = str.index(after: scanner.currentIndex)
+						if scannedString[scannedString.index(before: scannedString.endIndex)] != "\\" {
+							// Find matching quote mark.
+							slices.append(buffer)
+							break
+						} else {
+							// The quote mark is escaped. Continue.
+							buffer.remove(at: buffer.index(before: buffer.endIndex))
+							buffer.append(quote)
+						}
+					} else {
+						if buffer.count > 0 {
+							slices.append(buffer)
+						}
+						break
 					}
-					scanner.charactersToBeSkipped = CharacterSet.whitespacesAndNewlines
-				} else {
+				}
+				scanner.charactersToBeSkipped = CharacterSet.whitespacesAndNewlines
+			} else {
+				if let result = result {
 					slices.append(result)
 				}
 			}
@@ -251,6 +238,25 @@ public struct Parser {
 		}
 		return options
 	}
+}
+
+struct ParseResult {
+	var url: URL
+	var user: String?
+	var password: String?
+	var postData: String?
+	var headers: [String: String]
+	var postFields: [String: String]
+	var files: [String: String]
+	var httpMethod: String
+}
+
+struct Parser {
+	public private(set) var command: String
+
+	init(command: String) {
+		self.command = command
+	}
 
 	static func compile(_ options: [Option]) throws -> ParseResult {
 		var url: String = ""
@@ -306,7 +312,7 @@ public struct Parser {
 
 		url = url.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 		if !url.hasPrefix("https://") && !url.hasPrefix("http://") {
-			throw ParserError.invalidURL
+			throw ParserError.invalidURL(url)
 		}
 
 		do {
@@ -331,7 +337,7 @@ public struct Parser {
 		}
 
 		guard let finalUrl = URL(string: url) else {
-			throw ParserError.invalidURL
+			throw ParserError.invalidURL(url)
 		}
 
 		return ParseResult(url: finalUrl, user: user, password: password, postData: postData, headers: headers, postFields: postFields, files: files, httpMethod: finalHTTPMethod)
@@ -339,9 +345,9 @@ public struct Parser {
 
 	func parse() throws -> ParseResult {
 		let command = self.command.trimmingCharacters(in: CharacterSet.whitespaces)
-		let slices = Parser.slice(command)
-		let tokens = Parser.tokenize(slices)
-		let options = try Parser.convertTokensToOptions(tokens)
+		let slices = Lexer.slice(command)
+		let tokens = Lexer.tokenize(slices)
+		let options = try Lexer.convertTokensToOptions(tokens)
 		let result = try Parser.compile(options)
 		return result
 	}
