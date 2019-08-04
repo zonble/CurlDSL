@@ -82,7 +82,7 @@ public struct Parser {
 		}
 
 		while scanner.isAtEnd == false {
-			if let result = scanner.scanUpToString(" ") {
+			if let result = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " \n") ) {
 				if let (index, quote) = findQuote(result) {
 					let beforeQuote = result[result.startIndex..<index]
 					var buffer = String(beforeQuote)

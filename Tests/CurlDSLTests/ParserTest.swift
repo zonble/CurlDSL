@@ -48,6 +48,28 @@ final class ParserOptionsTests: XCTestCase {
 }
 
 final class ParserTokenizingTests: XCTestCase {
+
+	func testMultiLines() {
+		let str = """
+curl
+http://kkbox.com
+"""
+		let result = Parser.slice(str)
+		let tokens = Parser.tokenize(result)
+		switch tokens[0] {
+		case Token.commandBegin:
+			break
+		default:
+			XCTFail()
+		}
+		switch tokens[1] {
+		case Token.string(let str):
+			XCTAssert(str == "http://kkbox.com")
+		default:
+			XCTFail()
+		}
+	}
+
 	func testTokenize1() {
 		let str = "curl"
 		let result = Parser.slice(str)
