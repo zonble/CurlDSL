@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'CurlDSL'
-  s.version          = '0.0.1'
+  s.version          = '0.0.2'
   s.summary          = 'CurlDSL converts cURL commands into `URLRequest` objects.'
   s.description      = <<-DESC
 CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
