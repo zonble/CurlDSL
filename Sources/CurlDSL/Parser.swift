@@ -63,23 +63,24 @@ public struct Parser {
 		self.command = command
 	}
 
+	static func findQuote(_ str: String) -> (String.Index, String)? {
+		let quoteScanner = Scanner(string: str)
+		quoteScanner.charactersToBeSkipped = nil
+		quoteScanner.currentIndex = str.startIndex
+		if quoteScanner.scanUpToCharacters(from: CharacterSet(charactersIn: "\"\'")) != nil {
+			if quoteScanner.isAtEnd {
+				return nil
+			}
+			let index = quoteScanner.currentIndex
+			let quote = String(str[index])
+			return (index, quote)
+		}
+		return (str.startIndex, String(str[str.startIndex]))
+	}
+
 	static func slice(_ str: String) -> [String] {
 		var slices = [String]()
 		let scanner = Scanner(string: str)
-
-		func findQuote(_ str: String) -> (String.Index, String)? {
-			for i in str.indices {
-				switch str[i] {
-				case "\"":
-					return (i, "\"")
-				case "\'":
-					return (i, "\'")
-				default:
-					continue
-				}
-			}
-			return nil
-		}
 
 		while scanner.isAtEnd == false {
 			if let result = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " \n") ) {
