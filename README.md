@@ -1,15 +1,18 @@
 # CurlDSL
 
-CurlDSL converts curl commands into `URLRequest` objects. The Swift package
+CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
 helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
-curl command example for a Web API endpoint.
+cURL command example for a Web API endpoint.
+
+CurlDSL is not a Swift code generator, but it parses and interprets your cURL
+command at run time.
 
 ## Requirement
 
-- Swift 5
-- iOS 13
-- macOS 10.15
-- tvOS 13
+- Swift 5 or above
+- iOS 13 or above
+- macOS 10.15 or above
+- tvOS 13 or above
 
 ## Installation
 
@@ -17,7 +20,7 @@ You can install the package via Swift Package Manager.
 
 ## Usage
 
-There is only one important object, `CURL`. You can just pass your curl command
+There is only one important object, `CURL`. You can just pass your cURL command
 to it. For example:
 
 ``` swift
@@ -56,5 +59,6 @@ following list.
    -A, --user-agent=STRING                 User-Agent to send to server (H)
 ```
 
+Pull requests are welcome.
 
 Enjoy!
