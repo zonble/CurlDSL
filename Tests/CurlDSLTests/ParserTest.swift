@@ -2,6 +2,7 @@ import XCTest
 @testable import CurlDSL
 
 final class ParserOptionsTests: XCTestCase {
+
 	func testOptions1() {
 		let str = ""
 		let result = Parser.slice(str)
@@ -41,7 +42,46 @@ final class ParserOptionsTests: XCTestCase {
 				XCTFail()
 			}
 		} catch {
-				XCTFail()
+			XCTFail()
+		}
+	}
+
+	func testInvalidOption1() {
+		let str = "curl -F -F"
+		let result = Parser.slice(str)
+		let tokens = Parser.tokenize(result)
+		do {
+			_ = try Parser.convertTokensToOptions(tokens)
+			XCTFail()
+		} catch ParserError.inValidParameter {
+		} catch {
+			XCTFail()
+		}
+	}
+
+	func testInvalidOption2() {
+		let str = "curl -F"
+		let result = Parser.slice(str)
+		let tokens = Parser.tokenize(result)
+		do {
+			_ = try Parser.convertTokensToOptions(tokens)
+			XCTFail()
+		} catch ParserError.inValidParameter {
+		} catch {
+			XCTFail()
+		}
+	}
+
+	func testInvalidOption3() {
+		let str = "curl --form --form"
+		let result = Parser.slice(str)
+		let tokens = Parser.tokenize(result)
+		do {
+			_ = try Parser.convertTokensToOptions(tokens)
+			XCTFail()
+		} catch ParserError.inValidParameter {
+		} catch {
+			XCTFail()
 		}
 	}
 
