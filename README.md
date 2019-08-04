@@ -58,7 +58,6 @@ following list.
    -d, --data=DATA                         HTTP POST data (H)
    -F, --form=KEY=VALUE                    Specify HTTP multipart POST data (H)
        --form-string=KEY=VALUE             Specify HTTP multipart POST data (H)
-   -G, --get                               Send the -d data with a HTTP GET (H)
    -H, --header=LINE                       Pass custom header LINE to server (H)
    -e, --referer=                          Referer URL (H)
    -X, --request=COMMAND                   Specify request command to use
