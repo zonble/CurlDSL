@@ -53,7 +53,7 @@ final class CurlDSLTests: XCTestCase {
 			curl.run(handler: handler)
 			self.wait(for: [exp], timeout: 10)
 		} catch {
-			XCTFail()
+			XCTFail("\(error)")
 		}
 	}
 
@@ -74,7 +74,7 @@ final class CurlDSLTests: XCTestCase {
 			curl.run(handler: handler)
 			self.wait(for: [exp], timeout: 10)
 		} catch {
-			XCTFail()
+			XCTFail("\(error)")
 		}
 	}
 
@@ -116,7 +116,7 @@ final class CurlDSLTests: XCTestCase {
 			curl.run(handler: handler)
 			self.wait(for: [exp], timeout: 10)
 		} catch  {
-			XCTFail()
+			XCTFail("\(error)")
 		}
 	}
 

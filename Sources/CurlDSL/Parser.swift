@@ -40,8 +40,11 @@ public enum ParserError: Error, LocalizedError {
 
 struct Lexer {
 	static func tokenize(_ str: String) -> [String] {
+		let str = str.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 		var slices = [String]()
 		let scanner = Scanner(string: str)
+		scanner.charactersToBeSkipped = nil
+		var buffer = ""
 
 		while scanner.isAtEnd == false {
 			let result = scanner.scanUpToCharacters(from: CharacterSet(charactersIn: " \n\"\'") )
@@ -49,48 +52,63 @@ struct Lexer {
 				scanner.currentIndex = str.index(after: scanner.currentIndex)
 			}
 			if scanner.isAtEnd {
-				if let result = result {
-					slices.append(result)
-				}
+				buffer += result ?? ""
+				slices.append(buffer)
 				break
 			}
 
 			let lastChar = String(str[scanner.currentIndex])
-
 			if lastChar == "\"" || lastChar == "\'" {
 				let quote = lastChar
-				var buffer = result ?? ""
-				scanner.charactersToBeSkipped = nil
+				buffer += result ?? ""
 				scanner.currentIndex = str.index(after: scanner.currentIndex)
 				while true {
 					if let scannedString = scanner.scanUpToString(quote) {
 						buffer.append(scannedString)
 						if scanner.isAtEnd {
-							slices.append(buffer)
+							if !buffer.isEmpty {
+								slices.append(buffer)
+							}
+							buffer = ""
 							break
 						}
-						scanner.currentIndex = str.index(after: scanner.currentIndex)
 						if scannedString[scannedString.index(before: scannedString.endIndex)] != "\\" {
 							// Find matching quote mark.
-							slices.append(buffer)
+							scanner.currentIndex = str.index(after: scanner.currentIndex)
+							if let _ = scanner.scanCharacters(from: CharacterSet(charactersIn: " \n") ) {
+								if !buffer.isEmpty {
+									slices.append(buffer)
+									buffer = ""
+								}
+							}
 							break
 						} else {
 							// The quote mark is escaped. Continue.
+							scanner.currentIndex = str.index(after: scanner.currentIndex)
 							buffer.remove(at: buffer.index(before: buffer.endIndex))
 							buffer.append(quote)
 						}
 					} else {
-						if buffer.count > 0 {
+						if !buffer.isEmpty {
 							slices.append(buffer)
+							buffer = ""
 						}
 						break
 					}
 				}
-				scanner.charactersToBeSkipped = CharacterSet.whitespacesAndNewlines
-			} else {
-				if let result = result {
-					slices.append(result)
+				if scanner.isAtEnd {
+					if !buffer.isEmpty {
+						slices.append(buffer)
+						buffer = ""
+					}
+					break
 				}
+			} else {
+				buffer += result ?? ""
+				if !buffer.isEmpty {
+					slices.append(buffer)
+				}
+				buffer = ""
 			}
 		}
 		return slices
@@ -152,7 +170,7 @@ struct Lexer {
 			if keyValue.count < 2 {
 				throw ParserError.inValidParameter(components[0])
 			}
-			options.append(.header(keyValue[0], keyValue[1]))
+			options.append(.header(keyValue[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines), keyValue[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)))
 		case "--referer":
 			if components.count < 2 {
 				throw ParserError.inValidParameter(components[0])

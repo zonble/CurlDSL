@@ -3,6 +3,76 @@ import XCTest
 
 final class LexerptionsTests: XCTestCase {
 
+	func testFull1() {
+		let str = "curl --form=message=\" I like it \" -X POST --header=\"Accept: application/json\" https://httpbin.org/post"
+		let result = Lexer.tokenize(str)
+		do {
+			let options = try Lexer.convertTokensToOptions(result)
+			switch options[0] {
+			case .form(let key, let value):
+				XCTAssert(key == "message")
+				XCTAssert(value == " I like it ")
+			default:
+				XCTFail()
+			}
+			switch options[1] {
+			case .requestMethod(let method):
+				XCTAssert(method == "POST")
+			default:
+				XCTFail()
+			}
+			switch options[2] {
+			case .header(let key, let value):
+				XCTAssert(key == "Accept")
+				XCTAssert(value == "application/json", "-\(value)-")
+			default:
+				XCTFail()
+			}
+			switch options[3] {
+			case .url(let url):
+				XCTAssert(url == "https://httpbin.org/post")
+			default:
+				XCTFail()
+			}
+		} catch {
+			XCTFail()
+		}
+	}
+
+	func testFull2() {
+		let str = "curl --referer=\"http://zonble.net\" --request=POST --user-agent=\"CURL 12345\" https://httpbin.org/post"
+		let result = Lexer.tokenize(str)
+		do {
+			let options = try Lexer.convertTokensToOptions(result)
+			switch options[0] {
+			case .referer(let value):
+				XCTAssert(value == "http://zonble.net")
+			default:
+				XCTFail()
+			}
+			switch options[1] {
+			case .requestMethod(let method):
+				XCTAssert(method == "POST")
+			default:
+				XCTFail()
+			}
+			switch options[2] {
+			case .userAgent(let value):
+				XCTAssert(value == "CURL 12345", "-\(value)-")
+			default:
+				XCTFail()
+			}
+			switch options[3] {
+			case .url(let url):
+				XCTAssert(url == "https://httpbin.org/post")
+			default:
+				XCTFail()
+			}
+		} catch {
+			XCTFail()
+		}
+	}
+
 	func testOptions1() {
 		let str = ""
 		let result = Lexer.tokenize(str)
@@ -19,8 +89,8 @@ final class LexerptionsTests: XCTestCase {
 		let str = " curl "
 		let result = Lexer.tokenize(str)
 		do {
-			_ = try Lexer.convertTokensToOptions(result)
-			XCTFail()
+			let tokens = try Lexer.convertTokensToOptions(result)
+			XCTFail("\(tokens)")
 		} catch ParserError.noURL {
 		} catch {
 			XCTFail()
@@ -96,7 +166,7 @@ final class LexerTokenizingTests: XCTestCase {
 	func testTokenize3() {
 		let str = "  "
 		let result = Lexer.tokenize(str)
-		XCTAssert(result == [])
+		XCTAssert(result == [], "\(result)")
 	}
 
 	func testTokenize4() {
@@ -170,6 +240,19 @@ final class LexerTokenizingTests: XCTestCase {
 		let result = Lexer.tokenize(str)
 		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
 	}
+
+	func testTokenize12() {
+		let str = #"curl "http:"//kkbox."com""#
+		let result = Lexer.tokenize(str)
+		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
+	}
+
+	func testTokenize13() {
+		let str = #"curl "ht"tp://kkbox."com""#
+		let result = Lexer.tokenize(str)
+		XCTAssert(result == ["curl", "http://kkbox.com"], "\(result)")
+	}
+
 
 
 	//    static var allTests = [
