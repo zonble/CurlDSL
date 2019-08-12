@@ -4,6 +4,21 @@ import Combine
 
 final class CurlDSLTests: XCTestCase {
 
+	func testFB() {
+		let exp = self.expectation(description: "FB")
+		do {
+
+		let c = try CURL("curl -X POST \"https://graph.facebook.com/4?fields=id,name&access_token=EAAClKuzpQyQBAETe39Fry4buuom6WH2eFI4hgyuFZBW0NE8zzmLwj0jskQdK0zAK3W7kuqoKmdK5nGImq5VosqNz1uKnBBHr75SLa3M488KEtzc4dWbAgKXnCy1j9ZBKZBiw5yzCGDILvAUPnlAsdBTZAZCZCKEb9eGCgOoFuiFxDwJIj0GkeONyMoq2z3rA3SDmKC4R4qugZDZD\"")
+			c.run { data, response, error in
+				exp.fulfill()
+				print(String(data:data!, encoding:.utf8@autoclosure))
+			}
+			self.wait(for: [exp], timeout: 3)
+
+		} catch {
+		}
+	}
+
 	func testInvliadURL() {
 		do {
 			_ = try CURL("curl taliyugatalimba")
