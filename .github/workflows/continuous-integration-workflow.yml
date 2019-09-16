@@ -5,7 +5,7 @@ on: [push]
 jobs:
   build:
     name: Build
-    runs-on: macOS-10.15
+    runs-on: macOS-10.14
     steps:
       - name: Swift build
         run: swift build
