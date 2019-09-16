@@ -1,0 +1,11 @@
+name: Build
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: macOS-10.15
+    steps:
+      - name: Swift build
+        run: swift build
