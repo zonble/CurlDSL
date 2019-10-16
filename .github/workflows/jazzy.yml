@@ -18,9 +18,7 @@ jobs:
         run: jazzy
       - name: Deploy
         run: |
-          # rm -rf .git
           cd docs
-          ls -al
           git init
           git config user.name  "CI"
           git config user.email "jazzy-ci@github.com"

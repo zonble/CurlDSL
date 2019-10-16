@@ -11,13 +11,19 @@ public enum Option {
 	case requestMethod(String)
 }
 
-/// Errors for `Parser`.
+/// Errors that could happen during parsing parameters.
 public enum ParserError: Error, LocalizedError {
+	/// Your command does not start with `curl`.
 	case invalidBegin
+	/// No URL given.
 	case noURL
+	/// The format of the URL is invalid.
 	case invalidURL(String)
+	/// No such option.
 	case noSuchOption(String)
+	/// The given paramater is invalid.
 	case inValidParameter(String)
+	/// Other syntax error.
 	case otherSyntaxError
 
 	public var errorDescription: String? {
