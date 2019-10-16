@@ -2,18 +2,34 @@ import Foundation
 
 public typealias Callback<T> = (Result<T, Error>) -> ()
 
-public enum HandlerError: Error {
+/// The errors that could happen during using `Handler` to handle HTTP responses.
+public enum HandlerError: Error, LocalizedError {
+	/// There is no data in the response.
 	case noData
+	/// The format of the response is invalid.
 	case invalidFormat
+
+	public var errorDescription: String? {
+		switch self {
+		case .noData:
+			return "There is no data in the response."
+		case .invalidFormat:
+			return "The format of the response is invalid."
+		}
+	}
 }
 
+/// A common interface for handlers that handles HTTP responses.
 public class Handler<T> {
+	/// The callback block.
 	var callback: Callback<T>
 
+	/// Creates a new instance with a callback block.
 	public init(_ callback: @escaping Callback<T>) {
 		self.callback = callback
 	}
 
+	/// Handles the incoming data. A subclass should override the method.
 	public func handle(_: Data?, _: URLResponse?, _: Error?) {
 		fatalError("Not implemented")
 	}

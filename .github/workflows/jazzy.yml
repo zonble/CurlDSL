@@ -17,10 +17,7 @@ jobs:
       - name: Run Jazzy
         run: jazzy
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@master
+        uses: maxheld83/ghpages@master
+        secrets: ${{ secrets.ACCESS_TOKEN }}
         env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BASE_BRANCH: master
-          BRANCH: gh-pages
-          FOLDER: docs
-          BUILD_SCRIPT: echo 'hi'
+          BUILD_DIR: docs
