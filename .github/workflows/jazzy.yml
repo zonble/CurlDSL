@@ -17,7 +17,12 @@ jobs:
       - name: Run Jazzy
         run: jazzy
       - name: Deploy
-        uses: maxheld83/ghpages@master
-        secrets: ${{ secrets.ACCESS_TOKEN }}
-        env:
-          BUILD_DIR: docs
+        run: |
+          rm -rf .git
+          cd docs
+          git add .
+          git commit -m "Updated docs"
+          git config user.name  "CI"
+          git config user.email "jazzy-ci@github.com"
+          git remote add secure-origin https://${GITHUB_TOKEN}@github.com/zonble/CurlDSL.git
+          git push --force secure-origin gh-pages
