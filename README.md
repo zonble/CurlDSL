@@ -2,6 +2,8 @@
 
 2019 © Weizhong Yang a.k.a zonble
 
+[![Actions Status](https://github.com/zonble/CurlDSL/workflows/Build/badge.svg)](https://github.com/zonble/CurlDSL/actions)
+
 CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
 helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
 cURL command example for a Web API endpoint.
@@ -10,7 +12,7 @@ CurlDSL does not embed cURL library into your project. It is also not a Swift
 code generator, but it is a simple interpreter, it parses and interprets your
 cURL command at run time.
 
-The project is inspired by [cURL as DSL](https://github.com/shibukawa/curl_as_dsl) 
+The project is inspired by [cURL as DSL](https://github.com/shibukawa/curl_as_dsl)
 by [Yoshiki Shibukawa](https://github.com/shibukawa).
 
 CurlDSL supports only HTTP and HTTPS right now.
@@ -44,7 +46,7 @@ let request = try? CURL("curl -X GET https://httpbin.org/json").buildRequest()
 Or jsut run the data task:
 
 ``` swift
-try CURL("https://httpbin.org/json").run { data, response, error in 
+try CURL("https://httpbin.org/json").run { data, response, error in
     /// Do what you like...
 }
 ```
