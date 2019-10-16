@@ -26,7 +26,7 @@ CurlDSL supports only HTTP and HTTPS right now.
 
 ## Installation
 
-You can install the package via Swift Package Manager.
+You can install the package via [Swift Package Manager](https://swift.org/package-manager/).
 
 ## Usage
 
