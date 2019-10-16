@@ -1,0 +1,26 @@
+name: Jazzy Docs
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: norionomura/jazzy:latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Run Jazzy
+        run: jazzy
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BASE_BRANCH: master
+          BRANCH: gh-pages
+          FOLDER: docs
+          BUILD_SCRIPT: echo 'hi'
