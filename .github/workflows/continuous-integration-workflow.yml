@@ -6,10 +6,12 @@ jobs:
     name: Build
     runs-on: macOS-latest
     env:
-        DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Swift build
         run: swift build
+      - name: Generate Xcode Project
+        run: swift package generate-xcodeproj
       - name: Swift test
-        run: swift test
+        run: xcodebuild -scheme CurlDSL-Package -destination 'platform=iOS Simulator,name=iPhone 11,OS=13.0' -enableCodeCoverage YES build test
