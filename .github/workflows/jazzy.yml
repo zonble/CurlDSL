@@ -18,7 +18,7 @@ jobs:
         run: jazzy
       - name: Deploy
         run: |
-          rm -rf .git
+          # rm -rf .git
           cd docs
           git add .
           git commit -m "Updated docs"
