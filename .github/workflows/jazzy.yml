@@ -6,14 +6,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    container:
-      image: norionomura/jazzy:latest
-
+    runs-on: macOS-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+      - name: Install Jazzy
+        run: gem install jazzy
       - name: Run Jazzy
         run: jazzy
       - name: Deploy
