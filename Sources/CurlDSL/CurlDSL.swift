@@ -7,7 +7,7 @@ import Combine
 ///
 /// For example. if you want to fetch a file in JSON format from httpbin.org,
 /// you can use only one line of Swift code:
-/// 
+///
 /// ``` swift
 /// try URL("https://httpbin.org/json").run { data, response, error in ... }
 /// ```
