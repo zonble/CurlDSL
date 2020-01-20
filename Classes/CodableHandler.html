@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CodableHandler Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/CodableHandler" class="dashAnchor"></a>
+    <a title="CodableHandler Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">CurlDSL Docs</a> (72% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">CurlDSL Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        CodableHandler Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/CodableHandler.html">CodableHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:7CurlDSL11DataHandlerC">DataHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Handler.html">Handler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:7CurlDSL21JsonDictionaryHandlerC">JsonDictionaryHandler</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/HandlerError.html">HandlerError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Option.html">Option</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ParserError.html">ParserError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/CURL.html">CURL</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:7CurlDSL8Callbacka">Callback</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>CodableHandler</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">CodableHandler</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt"><a href="../Classes/Handler.html">Handler</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span><span class="p">,</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Encodable</span></code></pre>
+
+                </div>
+              </div>
+            <p>A handler that coverts JSON response into cadable objects.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CurlDSL14CodableHandlerC19keyDecodingStrategy10Foundation11JSONDecoderC03KeyfG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/keyDecodingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CurlDSL14CodableHandlerC19keyDecodingStrategy10Foundation11JSONDecoderC03KeyfG0Ovp">keyDecodingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The strategy to use for decoding keys. Defaults to <code>.useDefaultKeys</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">keyDecodingStrategy</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="o">.</span><span class="kt">KeyDecodingStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CurlDSL14CodableHandlerC20dateDecodingStrategy10Foundation11JSONDecoderC04DatefG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/dateDecodingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CurlDSL14CodableHandlerC20dateDecodingStrategy10Foundation11JSONDecoderC04DatefG0Ovp">dateDecodingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The strategy to use in decoding dates. Defaults to <code>.deferredToDate</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">dateDecodingStrategy</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="o">.</span><span class="kt">DateDecodingStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CurlDSL14CodableHandlerC20dataDecodingStrategy10Foundation11JSONDecoderC04DatafG0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/dataDecodingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CurlDSL14CodableHandlerC20dataDecodingStrategy10Foundation11JSONDecoderC04DatafG0Ovp">dataDecodingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The strategy to use in decoding binary data. Defaults to <code>.base64</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">dataDecodingStrategy</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="o">.</span><span class="kt">DataDecodingStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7CurlDSL14CodableHandlerC34nonConformingFloatDecodingStrategy10Foundation11JSONDecoderC03NonfghI0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/nonConformingFloatDecodingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7CurlDSL14CodableHandlerC34nonConformingFloatDecodingStrategy10Foundation11JSONDecoderC03NonfghI0Ovp">nonConformingFloatDecodingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The strategy to use in decoding non-conforming numbers. Defaults to <code>.throw</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nonConformingFloatDecodingStrategy</span><span class="p">:</span> <span class="kt">JSONDecoder</span><span class="o">.</span><span class="kt">NonConformingFloatDecodingStrategy</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="https://github.com/zonble/CurlDSL" target="_blank" rel="external">zonble</a>. All rights reserved. (Last updated: 2020-01-20)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CurlDSL  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a title="CurlDSL  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html">CurlDSL Docs</a> (72% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html">CurlDSL Reference</a>
+        <img id="carat" src="img/carat.png" />
+        CurlDSL  Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/CodableHandler.html">CodableHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes.html#/s:7CurlDSL11DataHandlerC">DataHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Handler.html">Handler</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes.html#/s:7CurlDSL21JsonDictionaryHandlerC">JsonDictionaryHandler</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/HandlerError.html">HandlerError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/Option.html">Option</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/ParserError.html">ParserError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/CURL.html">CURL</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Typealiases.html#/s:7CurlDSL8Callbacka">Callback</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <h1 id='curldsl' class='heading'>CurlDSL</h1>
+
+<p>2019 © Weizhong Yang a.k.a zonble</p>
+
+<p><a href="https://github.com/zonble/CurlDSL/actions"><img src="https://github.com/zonble/CurlDSL/workflows/Build/badge.svg" alt="Actions Status"></a></p>
+
+<p>CurlDSL converts cURL commands into <code>URLRequest</code> objects. The Swift package
+helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
+cURL command example for a Web API endpoint.</p>
+
+<p>CurlDSL does not embed cURL library into your project. It is also not a Swift
+code generator, but it is a simple interpreter, it parses and interprets your
+cURL command at run time.</p>
+
+<p>The project is inspired by <a href="https://github.com/shibukawa/curl_as_dsl">cURL as DSL</a>
+by <a href="https://github.com/shibukawa">Yoshiki Shibukawa</a>.</p>
+
+<p>CurlDSL supports only HTTP and HTTPS right now.</p>
+<h2 id='requirement' class='heading'>Requirement</h2>
+
+<ul>
+<li>Swift 5.1 or above</li>
+<li>iOS 13 or above</li>
+<li>macOS 10.15 or above</li>
+<li>tvOS 13 or above</li>
+</ul>
+<h2 id='installation' class='heading'>Installation</h2>
+
+<p>You can install the package via <a href="https://swift.org/package-manager/">Swift Package Manager</a>.</p>
+<h2 id='usage' class='heading'>Usage</h2>
+
+<p>There is only one important object, <code><a href="Structs/CURL.html">CURL</a></code>. You can just pass your cURL command
+to it. For example:</p>
+<pre class="highlight swift"><code><span class="k">try</span> <span class="kt">CURL</span><span class="p">(</span><span class="s">"curl -X GET https://httpbin.org/json"</span><span class="p">)</span>
+</code></pre>
+
+<p>You can use it to build <code>URLRequest</code> objects.</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">request</span> <span class="o">=</span> <span class="k">try</span><span class="p">?</span> <span class="kt">CURL</span><span class="p">(</span><span class="s">"curl -X GET https://httpbin.org/json"</span><span class="p">)</span><span class="o">.</span><span class="nf">buildRequest</span><span class="p">()</span>
+</code></pre>
+
+<p>Or jsut run the data task:</p>
+<pre class="highlight swift"><code><span class="k">try</span> <span class="kt">CURL</span><span class="p">(</span><span class="s">"https://httpbin.org/json"</span><span class="p">)</span><span class="o">.</span><span class="n">run</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+    <span class="c1">/// Do what you like...</span>
+<span class="p">}</span>
+</code></pre>
+<h2 id='supported-options' class='heading'>Supported Options</h2>
+
+<p>We do not support all of options of cURL. The supported options are as the
+following list.</p>
+<pre class="highlight plaintext"><code>   -d, --data=DATA                         HTTP POST data (H)
+   -F, --form=KEY=VALUE                    Specify HTTP multipart POST data (H)
+       --form-string=KEY=VALUE             Specify HTTP multipart POST data (H)
+   -H, --header=LINE                       Pass custom header LINE to server (H)
+   -e, --referer=                          Referer URL (H)
+   -X, --request=COMMAND                   Specify request command to use
+       --url=URL                           URL to work with
+   -u, --user=USER[:PASSWORD]              Server user and password
+   -A, --user-agent=STRING                 User-Agent to send to server (H)
+</code></pre>
+<h2 id='built-in-response-handlers' class='heading'>Built-in Response Handlers</h2>
+
+<p>The package has several built-in handlers:</p>
+
+<ul>
+<li><code><a href="Classes.html#/s:7CurlDSL21JsonDictionaryHandlerC">JsonDictionaryHandler</a></code>: Decodes fetched JSON data into a dictionary.</li>
+<li><code><a href="Classes/CodableHandler.html">CodableHandler</a></code>: Decodes fetched JSON data into Codable objects.</li>
+<li><code><a href="Classes.html#/s:7CurlDSL11DataHandlerC">DataHandler</a></code>: Simply returns raw data.</li>
+</ul>
+<h2 id='license' class='heading'>License</h2>
+
+<p>The package is released under MIT license.</p>
+
+<p>Pull requests are welcome.</p>
+
+<p>Enjoy!</p>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="https://github.com/zonble/CurlDSL" target="_blank" rel="external">zonble</a>. All rights reserved. (Last updated: 2020-01-20)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

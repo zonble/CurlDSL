@@ -1,0 +1,75 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Handlers.swift",
+      "line": 3,
+      "symbol": "Callback",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 3,
+      "symbol": "Option",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 4,
+      "symbol": "Option.url(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 5,
+      "symbol": "Option.data(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 6,
+      "symbol": "Option.form(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 7,
+      "symbol": "Option.header(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 8,
+      "symbol": "Option.referer(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 9,
+      "symbol": "Option.userAgent(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 10,
+      "symbol": "Option.user(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL/Sources/CurlDSL/Parser.swift",
+      "line": 11,
+      "symbol": "Option.requestMethod(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/runner/runners/2.164.0/work/CurlDSL/CurlDSL"
+}
