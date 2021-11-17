@@ -22,10 +22,10 @@ public enum HandlerError: Error, LocalizedError {
 /// A common interface for handlers that handles HTTP responses.
 public class Handler<T> {
 	/// The callback block.
-	var callback: Callback<T>
+    var callback: Callback<T>
 
 	/// Creates a new instance with a callback block.
-	public init(_ callback: @escaping Callback<T>) {
+    required public init(_ callback: @escaping Callback<T>) {
 		self.callback = callback
 	}
 

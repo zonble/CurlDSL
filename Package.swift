@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.5
 
 import PackageDescription
 
@@ -11,6 +11,9 @@ let package = Package(
         .library(
             name: "CurlDSL",
             targets: ["CurlDSL"]),
+        .library(
+            name: "CurlDSLAsync",
+            targets: ["CurlDSL", "CurlDSLAsync"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -20,6 +23,9 @@ let package = Package(
         .target(
             name: "CurlDSL",
             dependencies: []),
+        .target(
+            name: "CurlDSLAsync",
+            dependencies: ["CurlDSL"]),
         .testTarget(
             name: "CurlDSLTests",
             dependencies: ["CurlDSL"]),
