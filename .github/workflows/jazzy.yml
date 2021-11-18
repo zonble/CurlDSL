@@ -7,8 +7,6 @@ on:
 jobs:
   build:
     runs-on: macos-11
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_11.app/Contents/Developer
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
