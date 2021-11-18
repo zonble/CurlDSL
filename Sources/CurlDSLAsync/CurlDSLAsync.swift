@@ -16,7 +16,7 @@ public enum CURLError: Error, LocalizedError {
 
 
 extension CURL {
-    @available(iOS 15.0.0, *)
+    @available(iOS 15.0.0, macOS 12.0.0, *)
     public func run() async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
             self.run { data, response, error in
@@ -33,7 +33,7 @@ extension CURL {
         }
     }
 
-    @available(iOS 15.0.0, *)
+    @available(iOS 15.0.0, macOS 12.0.0, *)
     public func run<T>(_ handlerType: Handler<T>.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in
             let handler = handlerType.init { result in
