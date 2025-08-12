@@ -1,5 +1,7 @@
 import XCTest
+#if canImport(Combine)
 import Combine
+#endif
 @testable import CurlDSL
 
 final class CurlDSLTests: XCTestCase {
@@ -28,6 +30,8 @@ final class CurlDSLTests: XCTestCase {
 		}
 	}
 
+	#if canImport(Combine)
+	@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 	func testPublisher() {
 
 		let exp = self.expectation(description: "POST")
@@ -49,6 +53,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail()
 		}
 	}
+	#endif
 
 	func testAuth1() {
 		let exp = self.expectation(description: "POST")
@@ -250,14 +255,25 @@ curl -d "{
 		}
 	}
 
-	//    func testExample() {
-	//        // This is an example of a functional test case.
-	//        // Use XCTAssert and related functions to verify your tests produce the correct
-	//        // results.
-	//        XCTAssertEqual(CurlDSL().text, "Hello, World!")
-	//    }
-	//
-	//    static var allTests = [
-	//        ("testExample", testExample),
-	//    ]
+	#if !canImport(ObjectiveC)
+	static var allTests: [(String, (CurlDSLTests) -> () throws -> Void)] = {
+		var tests: [(String, (CurlDSLTests) -> () throws -> Void)] = [
+			("testFB", testFB),
+			("testInvliadURL", testInvliadURL),
+			("testAuth1", testAuth1),
+			("testAuth2", testAuth2),
+			("testAuth3", testAuth3),
+			("testPOST", testPOST),
+			("testPOST2", testPOST2),
+			("testPOST3", testPOST3),
+			("testPOSTJson", testPOSTJson),
+			("testPOSTJson2", testPOSTJson2),
+			("testGET", testGET),
+		]
+		#if canImport(Combine)
+		tests.append(("testPublisher", testPublisher))
+		#endif
+		return tests
+	}()
+	#endif
 }

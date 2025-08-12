@@ -1,5 +1,10 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+#if canImport(Combine)
 import Combine
+#endif
 
 /// `CURL` converts a line of curl command into a `URLRequest` object. It helps
 /// you to create HTTP clients for your iOS/macOS/tvOS apps easier once you have
@@ -75,9 +80,12 @@ public struct CURL {
 
 	/// Runs the fetch command and you can receive the response from a
 	/// publisher.
+	#if canImport(Combine)
+	@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 	func run() -> URLSession.DataTaskPublisher {
 		let request = self.buildRequest()
 		let publisher = URLSession.shared.dataTaskPublisher(for: request)
 		return publisher
 	}
+	#endif
 }
