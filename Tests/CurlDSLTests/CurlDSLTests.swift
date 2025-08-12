@@ -1,5 +1,10 @@
 import XCTest
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
+#if canImport(Combine)
 import Combine
+#endif
 @testable import CurlDSL
 
 final class CurlDSLTests: XCTestCase {
@@ -28,6 +33,7 @@ final class CurlDSLTests: XCTestCase {
 		}
 	}
 
+	#if canImport(Combine)
 	func testPublisher() {
 
 		let exp = self.expectation(description: "POST")
@@ -49,6 +55,7 @@ final class CurlDSLTests: XCTestCase {
 			XCTFail()
 		}
 	}
+	#endif
 
 	func testAuth1() {
 		let exp = self.expectation(description: "POST")
