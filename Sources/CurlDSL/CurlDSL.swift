@@ -16,7 +16,7 @@ import Combine
 /// ``` swift
 /// try URL("https://httpbin.org/json").run { data, response, error in ... }
 /// ```
-public struct CURL {
+public struct CURL: Sendable {
 	private var result: ParseResult
 
 	/// Creates a new instance.
@@ -59,7 +59,7 @@ public struct CURL {
 	/// Runs the fetch command with a callback closure.
 	///
 	/// - Parameter completionHandler: The callback closure.
-	public func run(completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
+	public func run(completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> ()) {
 		let request = self.buildRequest()
 		let task = URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
 		task.resume()

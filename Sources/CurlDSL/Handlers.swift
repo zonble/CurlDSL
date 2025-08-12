@@ -3,10 +3,10 @@ import Foundation
 import FoundationNetworking
 #endif
 
-public typealias Callback<T> = (Result<T, Error>) -> ()
+public typealias Callback<T> = @Sendable (Result<T, Error>) -> ()
 
 /// The errors that could happen during using `Handler` to handle HTTP responses.
-public enum HandlerError: Error, LocalizedError {
+public enum HandlerError: Error, LocalizedError, Sendable {
 	/// There is no data in the response.
 	case noData
 	/// The format of the response is invalid.

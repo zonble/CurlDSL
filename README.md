@@ -19,7 +19,7 @@ CurlDSL supports only HTTP and HTTPS right now.
 
 ## Requirement
 
-- Swift 5.1 or above
+- Swift 5.9 or above
 - iOS 13 or above
 - macOS 10.15 or above
 - tvOS 13 or above
