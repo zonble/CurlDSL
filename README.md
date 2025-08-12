@@ -51,6 +51,24 @@ try CURL("https://httpbin.org/json").run { data, response, error in
 }
 ```
 
+### Multiline cURL Commands
+
+CurlDSL supports multiline cURL commands with line continuation characters (`\`), which is useful when copying commands from documentation or tools:
+
+``` swift
+let multilineCurl = """
+curl -X POST \\
+https://api.example.com/oauth/token \\
+-F client_id=12345 \\
+-F client_secret=secret \\
+-F grant_type=authorization_code
+"""
+
+let request = try? CURL(multilineCurl).buildRequest()
+```
+
+The library automatically handles line continuation characters by removing them and joining the lines properly.
+
 ## Supported Options
 
 We do not support all of options of cURL. The supported options are as the
