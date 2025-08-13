@@ -126,4 +126,12 @@ https://example.com
             XCTFail("Should handle multiple consecutive line continuations: \(error)")
         }
     }
+    
+    static var allTests = [
+        ("testLineContinuationInCurlCommand", testLineContinuationInCurlCommand),
+        ("testExactInstagramOAuthScenario", testExactInstagramOAuthScenario),
+        ("testLineContinuationWithSpaces", testLineContinuationWithSpaces),
+        ("testLineContinuationWithTabs", testLineContinuationWithTabs),
+        ("testLineContinuationEdgeCases", testLineContinuationEdgeCases),
+    ]
 }

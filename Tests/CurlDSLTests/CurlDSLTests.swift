@@ -264,7 +264,34 @@ curl -d "{
 	//        XCTAssertEqual(CurlDSL().text, "Hello, World!")
 	//    }
 	//
-	//    static var allTests = [
-	//        ("testExample", testExample),
-	//    ]
+	#if canImport(Combine)
+	static var allTests = [
+		("testFB", testFB),
+		("testInvliadURL", testInvliadURL),
+		("testPublisher", testPublisher),
+		("testAuth1", testAuth1),
+		("testAuth2", testAuth2),
+		("testAuth3", testAuth3),
+		("testPOST", testPOST),
+		("testPOST2", testPOST2),
+		("testPOST3", testPOST3),
+		("testPOSTJson", testPOSTJson),
+		("testPOSTJson2", testPOSTJson2),
+		("testGET", testGET),
+	]
+	#else
+	static var allTests = [
+		("testFB", testFB),
+		("testInvliadURL", testInvliadURL),
+		("testAuth1", testAuth1),
+		("testAuth2", testAuth2),
+		("testAuth3", testAuth3),
+		("testPOST", testPOST),
+		("testPOST2", testPOST2),
+		("testPOST3", testPOST3),
+		("testPOSTJson", testPOSTJson),
+		("testPOSTJson2", testPOSTJson2),
+		("testGET", testGET),
+	]
+	#endif
 }

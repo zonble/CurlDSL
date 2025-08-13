@@ -74,4 +74,9 @@ curl -X POST \\
             XCTFail("Should successfully parse curl command copied from documentation: \(error)")
         }
     }
+    
+    static var allTests = [
+        ("testUserReportedInstagramOAuthScenario", testUserReportedInstagramOAuthScenario),
+        ("testUserWorkflowExample", testUserWorkflowExample),
+    ]
 }
