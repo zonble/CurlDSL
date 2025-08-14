@@ -1,6 +1,6 @@
 import Foundation
 
-public enum Option {
+public enum Option: Sendable {
 	case url(String)
 	case data(String)
 	case form(_ key: String, _ value: String)
@@ -12,7 +12,7 @@ public enum Option {
 }
 
 /// Errors that could happen during parsing parameters.
-public enum ParserError: Error, LocalizedError {
+public enum ParserError: Error, LocalizedError, Sendable {
 	/// Your command does not start with `curl`.
 	case invalidBegin
 	/// No URL given.
@@ -237,7 +237,7 @@ struct Lexer {
 	}
 }
 
-struct ParseResult {
+struct ParseResult: Sendable {
 	var url: URL
 	var user: String?
 	var password: String?

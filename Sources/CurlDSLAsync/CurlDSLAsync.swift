@@ -1,7 +1,10 @@
 import Foundation
+#if canImport(FoundationNetworking)
+import FoundationNetworking
+#endif
 import CurlDSL
 
-public enum CURLError: Error, LocalizedError {
+public enum CURLError: Error, LocalizedError, Sendable {
     case noData
 
     var localizedDescription: String {

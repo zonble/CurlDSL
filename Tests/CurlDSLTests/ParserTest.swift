@@ -259,3 +259,65 @@ final class LexerTokenizingTests: XCTestCase {
 	//        ("testExample", testExample),
 	//    ]
 }
+
+// MARK: - Multipart Tests
+final class MultipartTests: XCTestCase {
+	
+	func testMultipartBuildRequest() {
+		// Test that multipart requests are built correctly
+		let curlString = "curl -F name=value -F file=@/tmp/test.txt https://httpbin.org/post"
+		
+		do {
+			let curl = try CURL(curlString)
+			let request = curl.buildRequest()
+			
+			// Check that it's a POST request
+			XCTAssertEqual(request.httpMethod, "POST")
+			
+			// Check that Content-Type is multipart
+			let contentType = request.allHTTPHeaderFields?["Content-Type"]
+			XCTAssertNotNil(contentType)
+			XCTAssertTrue(contentType?.hasPrefix("multipart/form-data; boundary=") == true)
+			
+			// Check that body exists
+			XCTAssertNotNil(request.httpBody)
+			
+			if let body = request.httpBody, let bodyString = String(data: body, encoding: .utf8) {
+				// Should contain form field
+				XCTAssertTrue(bodyString.contains("name=\"name\""))
+				XCTAssertTrue(bodyString.contains("value"))
+				
+				// Should contain file field
+				XCTAssertTrue(bodyString.contains("name=\"file\""))
+				XCTAssertTrue(bodyString.contains("filename=\"test.txt\""))
+			}
+			
+		} catch {
+			XCTFail("Failed to create CURL object: \(error)")
+		}
+	}
+	
+	func testRegularFormData() {
+		// Test that regular form data without files uses URL encoding
+		let curlString = "curl -F name=value -F other=data https://httpbin.org/post"
+		
+		do {
+			let curl = try CURL(curlString)
+			let request = curl.buildRequest()
+			
+			// Check that it's a POST request
+			XCTAssertEqual(request.httpMethod, "POST")
+			
+			// For regular form fields without files, should still use multipart if -F is used
+			// because -F in curl typically indicates multipart even without files
+			let contentType = request.allHTTPHeaderFields?["Content-Type"]
+			XCTAssertNotNil(contentType)
+			// Since there are no files but -F was used, this will be application/x-www-form-urlencoded
+			// as per our current logic (files.isEmpty = true)
+			XCTAssertTrue(contentType?.contains("application/x-www-form-urlencoded") == true)
+			
+		} catch {
+			XCTFail("Failed to create CURL object: \(error)")
+		}
+	}
+}

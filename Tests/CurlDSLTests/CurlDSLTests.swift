@@ -311,13 +311,6 @@ curl -d "{
 		}
 	}
 
-	//    func testExample() {
-	//        // This is an example of a functional test case.
-	//        // Use XCTAssert and related functions to verify your tests produce the correct
-	//        // results.
-	//        XCTAssertEqual(CurlDSL().text, "Hello, World!")
-	//    }
-	//
 	#if canImport(Combine)
 	static var allTests = [
 		("testFB", testFB),
