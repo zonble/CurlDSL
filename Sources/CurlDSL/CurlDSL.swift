@@ -167,7 +167,6 @@ public struct CURL: Sendable {
 	/// Runs the fetch command and you can receive the response from a
 	/// publisher.
 	#if canImport(Combine)
-	@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 	func run() -> URLSession.DataTaskPublisher {
 		let request = self.buildRequest()
 		let publisher = URLSession.shared.dataTaskPublisher(for: request)
