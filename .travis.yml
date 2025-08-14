@@ -1,7 +1,0 @@
-language: swift
-osx_image: xcode16.2
-script:
-  - swift package generate-xcodeproj
-  - xcodebuild -scheme CurlDSL-Package -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' -enableCodeCoverage YES build test
-after_success:
-  - bash <(curl -s https://codecov.io/bash)

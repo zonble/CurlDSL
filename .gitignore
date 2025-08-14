@@ -6,3 +6,9 @@ xcuserdata/
 .idea
 .vscode
 docs
+.swiftpm
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
