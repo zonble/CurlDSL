@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: xcode-latest-stable
+          xcode-version: latest-stable
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Jazzy
