@@ -342,9 +342,27 @@ struct Parser {
 
 	func parse() throws -> ParseResult {
 		let command = self.command.trimmingCharacters(in: CharacterSet.whitespaces)
-		let slices = Lexer.tokenize(command)
+		// Handle line continuation characters (\) followed by whitespace/newlines
+		let processedCommand = Self.removeLineContinuations(from: command)
+		let slices = Lexer.tokenize(processedCommand)
 		let options = try Lexer.convertTokensToOptions(slices)
 		let result = try Parser.compile(options)
 		return result
+	}
+	
+	/// Removes line continuation characters (\) followed by whitespace/newlines
+	private static func removeLineContinuations(from command: String) -> String {
+		// Replace backslash followed by whitespace and newlines with a single space
+		let pattern = "\\\\\\s*\\n"
+		do {
+			let regex = try NSRegularExpression(pattern: pattern, options: [])
+			let range = NSRange(location: 0, length: command.utf16.count)
+			let result = regex.stringByReplacingMatches(in: command, options: [], range: range, withTemplate: " ")
+			// Clean up extra spaces
+			return result.replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
+		} catch {
+			// If regex fails, just return the original command
+			return command
+		}
 	}
 }

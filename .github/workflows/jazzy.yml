@@ -6,13 +6,13 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-15
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: "13.0"
+          xcode-version: "16.1"
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Install Jazzy
         run: gem install jazzy
       - name: Run Jazzy
