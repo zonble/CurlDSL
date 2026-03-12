@@ -6,31 +6,31 @@ import FoundationNetworking
 import Combine
 #endif
 
-/// `CURL` converts a line of curl command into a `URLRequest` object. It helps
-/// you to create HTTP clients for your iOS/macOS/tvOS apps easier once you have
-/// a example curl command.
+/// `CURL` converts a cURL command string into a `URLRequest` object. This makes
+/// it easier to build HTTP clients for iOS, macOS, or tvOS applications using
+/// example cURL commands.
 ///
-/// For example. if you want to fetch a file in JSON format from httpbin.org,
-/// you can use only one line of Swift code:
+/// For example, if you want to fetch a JSON file from httpbin.org, you can do
+/// so with a single line of Swift code:
 ///
 /// ``` swift
-/// try URL("https://httpbin.org/json").run { data, response, error in ... }
+/// try CURL("https://httpbin.org/json").run { data, response, error in ... }
 /// ```
 public struct CURL: Sendable {
 	private var result: ParseResult
 
-	/// Creates a new instance.
+	/// Initializes a new instance.
 	///
-	/// Please note that the method throws errors if the syntax is invalid in your
-	/// curl command.
+	/// Note that this initializer throws an error if the provided cURL command
+	/// has invalid syntax.
 	///
-	/// - Parameter str: The command in string format.
+	/// - Parameter str: The cURL command as a string.
 	public init(_ str: String) throws {
 		let paser = Parser(command: str)
 		self.result = try paser.parse()
 	}
 
-	/// Builds a `URLRequest` object from the given command.
+	/// Constructs a `URLRequest` object from the parsed cURL command.
 	public func buildRequest() -> URLRequest {
 		var request = URLRequest(url: result.url)
 		request.httpMethod = result.httpMethod
@@ -40,12 +40,12 @@ public struct CURL: Sendable {
 		if let data = result.postData {
 			request.httpBody = data.data(using: .utf8)
 		} else if !result.files.isEmpty {
-			// Handle multipart/form-data when files are present
+			// Handle multipart/form-data when files are present.
 			let boundary = "Boundary-\(UUID().uuidString)"
 			request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 			request.httpBody = buildMultipartBody(boundary: boundary, postFields: result.postFields, files: result.files)
 		} else if !result.postFields.isEmpty {
-			// Handle application/x-www-form-urlencoded for simple form data
+			// Handle application/x-www-form-urlencoded for simple form data.
 			request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 			let joined = result.postFields.map { k, v in
 				"\(k.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")=\(v.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed) ?? "")"
@@ -61,19 +61,21 @@ public struct CURL: Sendable {
 		return request
 	}
 	
-	/// Builds multipart/form-data body for requests containing files or mixed form data.
+	/// Constructs a multipart/form-data body for requests containing files or
+	/// mixed form data.
 	///
 	/// - Parameters:
-	///   - boundary: The boundary string to separate parts
-	///   - postFields: Form fields to include
-	///   - files: Files to upload (key-value pairs where value starts with @)
-	/// - Returns: Data containing the multipart body
+	///   - boundary: The boundary string used to separate parts.
+	///   - postFields: The form fields to include.
+	///   - files: The files to upload (key-value pairs where the value starts
+	///     with @).
+	/// - Returns: `Data` representing the multipart body.
 	private func buildMultipartBody(boundary: String, postFields: [String: String], files: [String: String]) -> Data {
 		var body = Data()
 		let boundaryData = "--\(boundary)\r\n".data(using: .utf8)!
 		let endBoundaryData = "--\(boundary)--\r\n".data(using: .utf8)!
 		
-		// Add form fields
+		// Add the form fields.
 		for (key, value) in postFields {
 			body.append(boundaryData)
 			let fieldHeader = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8)!
@@ -82,27 +84,27 @@ public struct CURL: Sendable {
 			body.append("\r\n".data(using: .utf8)!)
 		}
 		
-		// Add files
+		// Add the files.
 		for (key, filePath) in files {
 			body.append(boundaryData)
 			
-			// Remove the @ prefix from file path
+			// Remove the @ prefix from the file path.
 			let actualPath = String(filePath.dropFirst())
 			let filename = URL(fileURLWithPath: actualPath).lastPathComponent
 			
 			let fileHeader = "Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!
 			body.append(fileHeader)
 			
-			// Try to determine content type based on file extension
+			// Attempt to determine the content type based on the file extension.
 			let contentType = mimeType(for: filename)
 			let contentTypeHeader = "Content-Type: \(contentType)\r\n\r\n".data(using: .utf8)!
 			body.append(contentTypeHeader)
 			
-			// Read file data
+			// Read the file data.
 			if let fileData = try? Data(contentsOf: URL(fileURLWithPath: actualPath)) {
 				body.append(fileData)
 			} else {
-				// If file can't be read, append placeholder
+				// If the file cannot be read, append an error placeholder.
 				let errorData = "[File not found or unreadable: \(actualPath)]".data(using: .utf8) ?? Data()
 				body.append(errorData)
 			}
@@ -114,10 +116,10 @@ public struct CURL: Sendable {
 		return body
 	}
 	
-	/// Determines MIME type based on file extension.
+	/// Determines the MIME type based on a file's extension.
 	///
-	/// - Parameter filename: The filename to check
-	/// - Returns: MIME type string
+	/// - Parameter filename: The name of the file to evaluate.
+	/// - Returns: The corresponding MIME type as a string.
 	private func mimeType(for filename: String) -> String {
 		let ext = URL(fileURLWithPath: filename).pathExtension.lowercased()
 		switch ext {
@@ -142,18 +144,19 @@ public struct CURL: Sendable {
 		}
 	}
 
-	/// Runs the fetch command with a callback closure.
+	/// Executes the fetch command and returns the result via a callback closure.
 	///
-	/// - Parameter completionHandler: The callback closure.
+	/// - Parameter completionHandler: The closure to call upon completion.
 	public func run(completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> ()) {
 		let request = self.buildRequest()
 		let task = URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
 		task.resume()
 	}
 
-	/// Runs the fetch command and handles the reponse with a handler object.
+	/// Executes the fetch command and processes the response using a handler
+	/// object.
 	///
-	/// The handler should be a subclass of `Handler`.
+	/// The handler must be a subclass of `Handler`.
 	///
 	/// - Parameter handler: The handler.
 	public func run<T>(handler: Handler<T>) {
@@ -164,8 +167,8 @@ public struct CURL: Sendable {
 		task.resume()
 	}
 
-	/// Runs the fetch command and you can receive the response from a
-	/// publisher.
+	/// Executes the fetch command and returns a publisher that emits the
+	/// response.
 	#if canImport(Combine)
 	func run() -> URLSession.DataTaskPublisher {
 		let request = self.buildRequest()

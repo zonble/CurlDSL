@@ -4,21 +4,27 @@ import FoundationNetworking
 #endif
 import CurlDSL
 
+/// Errors that can occur when executing a cURL command asynchronously.
 public enum CURLError: Error, LocalizedError, Sendable {
+    /// Indicates that the response contained no data.
     case noData
 
-    var localizedDescription: String {
-        get {
-            switch self {
-            case .noData:
-                return "No data fetched"
-            }
+    public var errorDescription: String? {
+        switch self {
+        case .noData:
+            return "No data was fetched from the response."
         }
     }
 }
 
 
 extension CURL {
+    /// Executes the fetch command asynchronously and returns the raw response
+    /// data.
+    ///
+    /// - Returns: The `Data` retrieved from the request.
+    /// - Throws: An error if the network request fails, or `CURLError.noData`
+    ///   if the response contains no data.
     @available(iOS 15.0.0, macOS 12.0.0, *)
     public func run() async throws -> Data {
         return try await withCheckedThrowingContinuation { continuation in
@@ -36,6 +42,15 @@ extension CURL {
         }
     }
 
+    /// Executes the fetch command asynchronously and processes the response
+    /// using the specified handler type.
+    ///
+    /// - Parameter handlerType: A subclass of `Handler` used to process the
+    ///   response data (e.g., `JsonDictionaryHandler.self`).
+    /// - Returns: The processed result of type `T`, as determined by the
+    ///   provided handler.
+    /// - Throws: An error if the network request or the handler's processing
+    ///   fails.
     @available(iOS 15.0.0, macOS 12.0.0, *)
     public func run<T>(_ handlerType: Handler<T>.Type) async throws -> T {
         return try await withCheckedThrowingContinuation { continuation in

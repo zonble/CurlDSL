@@ -4,20 +4,15 @@
 
 [![Actions Status](https://github.com/zonble/CurlDSL/workflows/Build/badge.svg)](https://github.com/zonble/CurlDSL/actions)
 
-CurlDSL converts cURL commands into `URLRequest` objects. The Swift package
-helps you to build HTTP clients in your iOS/macOS/tvOS easier, once you have a
-cURL command example for a Web API endpoint.
+CurlDSL converts cURL commands into `URLRequest` objects. This Swift package makes it easier to build HTTP clients in your iOS, macOS, or tvOS apps, especially when working with web API endpoints that provide cURL examples.
 
-CurlDSL does not embed cURL library into your project. It is also not a Swift
-code generator, but it is a simple interpreter, it parses and interprets your
-cURL command at run time.
+CurlDSL does not embed the cURL library into your project, nor is it a Swift code generator. Instead, it acts as a simple interpreter that parses and executes your cURL commands at runtime.
 
-The project is inspired by [cURL as DSL](https://github.com/shibukawa/curl_as_dsl)
-by [Yoshiki Shibukawa](https://github.com/shibukawa).
+This project was inspired by [cURL as DSL](https://github.com/shibukawa/curl_as_dsl) by [Yoshiki Shibukawa](https://github.com/shibukawa).
 
-CurlDSL supports only HTTP and HTTPS right now.
+Currently, CurlDSL only supports HTTP and HTTPS.
 
-## Requirement
+## Requirements
 
 - Swift 5.9 or above
 - iOS 13 or above
@@ -26,34 +21,33 @@ CurlDSL supports only HTTP and HTTPS right now.
 
 ## Installation
 
-You can install the package via [Swift Package Manager](https://swift.org/package-manager/).
+You can install this package via the [Swift Package Manager](https://swift.org/package-manager/).
 
 ## Usage
 
-There is only one important object, `CURL`. You can just pass your cURL command
-to it. For example:
+The primary object you will interact with is `CURL`. Simply pass your cURL command to its initializer. For example:
 
 ``` swift
 try CURL("curl -X GET https://httpbin.org/json")
 ```
 
-You can use it to build `URLRequest` objects.
+You can use it to construct `URLRequest` objects:
 
 ``` swift
 let request = try? CURL("curl -X GET https://httpbin.org/json").buildRequest()
 ```
 
-Or jsut run the data task:
+Or just execute the data task directly:
 
 ``` swift
 try CURL("https://httpbin.org/json").run { data, response, error in
-    /// Do what you like...
+    // Do what you like...
 }
 ```
 
 ### Multiline cURL Commands
 
-CurlDSL supports multiline cURL commands with line continuation characters (`\`), which is useful when copying commands from documentation or tools:
+CurlDSL supports multiline cURL commands that use line continuation characters (`\`). This is particularly useful when copying commands directly from documentation or API tools:
 
 ``` swift
 let multilineCurl = """
@@ -67,12 +61,11 @@ https://api.example.com/oauth/token \\
 let request = try? CURL(multilineCurl).buildRequest()
 ```
 
-The library automatically handles line continuation characters by removing them and joining the lines properly.
+The library automatically handles line continuation characters by removing them and joining the lines correctly.
 
 ## Supported Options
 
-We do not support all of options of cURL. The supported options are as the
-following list.
+CurlDSL does not support all cURL options. The currently supported options include:
 
 ``` text
    -d, --data=DATA                         HTTP POST data (H)
@@ -88,15 +81,15 @@ following list.
 
 ## Built-in Response Handlers
 
-The package has several built-in handlers:
+This package includes several built-in response handlers:
 
 - `JsonDictionaryHandler`: Decodes fetched JSON data into a dictionary.
-- `CodableHandler`: Decodes fetched JSON data into Codable objects.
+- `CodableHandler`: Decodes fetched JSON data into `Codable` objects.
 - `DataHandler`: Simply returns raw data.
 
 ## License
 
-The package is released under MIT license.
+This package is released under the MIT License.
 
 Pull requests are welcome.
 

@@ -3,42 +3,43 @@ import Foundation
 import FoundationNetworking
 #endif
 
+/// A closure type used for handling the result of an asynchronous operation.
 public typealias Callback<T> = @Sendable (Result<T, Error>) -> ()
 
-/// The errors that could happen during using `Handler` to handle HTTP responses.
+/// Errors that can occur while using `Handler` to process HTTP responses.
 public enum HandlerError: Error, LocalizedError, Sendable {
-	/// There is no data in the response.
+	/// The response contains no data.
 	case noData
-	/// The format of the response is invalid.
+	/// The response format is invalid.
 	case invalidFormat
 
 	public var errorDescription: String? {
 		switch self {
 		case .noData:
-			return "There is no data in the response."
+			return "The response contains no data."
 		case .invalidFormat:
-			return "The format of the response is invalid."
+			return "The response format is invalid."
 		}
 	}
 }
 
-/// A common interface for handlers that handles HTTP responses.
+/// A common interface for processing HTTP responses.
 public class Handler<T> {
-	/// The callback block.
+	/// The callback closure.
     var callback: Callback<T>
 
-	/// Creates a new instance with a callback block.
+	/// Creates a new instance with the specified callback closure.
     required public init(_ callback: @escaping Callback<T>) {
 		self.callback = callback
 	}
 
-	/// Handles the incoming data. A subclass should override the method.
+	/// Handles the incoming data. Subclasses must override this method.
 	public func handle(_: Data?, _: URLResponse?, _: Error?) {
 		fatalError("Not implemented")
 	}
 }
 
-/// A handler that coverts JSON response into cadable objects.
+/// A handler that converts a JSON response into `Codable` objects.
 public class CodableHandler<T: Codable>: Handler<T> {
 	/// The strategy to use for decoding keys. Defaults to `.useDefaultKeys`.
 	public var keyDecodingStrategy: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys
@@ -82,7 +83,7 @@ public class CodableHandler<T: Codable>: Handler<T> {
 	}
 }
 
-/// A handler that returns the raw data.
+/// A handler that returns the raw response data.
 public class DataHandler: Handler<Data> {
 	/// :nodoc:
 	public override func handle(_ data: Data?, _ response: URLResponse?, _ apiError: Error?) {
@@ -104,7 +105,7 @@ public class DataHandler: Handler<Data> {
 	}
 }
 
-/// A handler that coverts JSON response into a dictionary.
+/// A handler that converts a JSON response into a dictionary.
 public class JsonDictionaryHandler: Handler<[AnyHashable: Any]> {
 	/// :nodoc:
 	public override func handle(_ data: Data?, _ response: URLResponse?, _ apiError: Error?) {

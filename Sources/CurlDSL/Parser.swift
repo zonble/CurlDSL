@@ -1,29 +1,38 @@
 import Foundation
 
+/// Represents the supported cURL options that can be parsed from a command.
 public enum Option: Sendable {
+	/// The URL to fetch.
 	case url(String)
+	/// The HTTP POST data (`-d` or `--data`).
 	case data(String)
+	/// The HTTP multipart POST data (`-F` or `--form`).
 	case form(_ key: String, _ value: String)
+	/// A custom HTTP header (`-H` or `--header`).
 	case header(_ key: String, _ value: String)
+	/// The referer URL (`-e` or `--referer`).
 	case referer(String)
+	/// The User-Agent string (`-A` or `--user-agent`).
 	case userAgent(String)
+	/// The server user and optional password (`-u` or `--user`).
 	case user(_ user: String, _ password: String?)
+	/// The HTTP request method (`-X` or `--request`).
 	case requestMethod(String)
 }
 
-/// Errors that could happen during parsing parameters.
+/// Errors that can occur while parsing parameters.
 public enum ParserError: Error, LocalizedError, Sendable {
-	/// Your command does not start with `curl`.
+	/// The command does not begin with `curl`.
 	case invalidBegin
-	/// No URL given.
+	/// A URL was not provided.
 	case noURL
-	/// The format of the URL is invalid.
+	/// The provided URL format is invalid.
 	case invalidURL(String)
-	/// No such option.
+	/// The specified option is not supported.
 	case noSuchOption(String)
-	/// The given paramater is invalid.
+	/// The provided parameter is invalid.
 	case inValidParameter(String)
-	/// Other syntax error.
+	/// Another syntax error occurred.
 	case otherSyntaxError
 
 	public var errorDescription: String? {
@@ -31,9 +40,9 @@ public enum ParserError: Error, LocalizedError, Sendable {
 		case .invalidBegin:
 			return "Your command should start with \"curl\"."
 		case .noURL:
-			return "You did not specific a URL in your command."
+			return "You did not specify a URL in your command."
 		case .invalidURL(let url):
-			return "The URL \(url) is invalid. We suppports only http and https protocol right now."
+			return "The URL \(url) is invalid. Only the HTTP and HTTPS protocols are currently supported."
 		case .noSuchOption(let option):
 			return "\(option) is not supported."
 		case .inValidParameter(let option):
@@ -79,7 +88,7 @@ struct Lexer {
 							break
 						}
 						if scannedString[scannedString.index(before: scannedString.endIndex)] != "\\" {
-							// Find matching quote mark.
+							// Find the matching quotation mark.
 							scanner.currentIndex = str.index(after: scanner.currentIndex)
 							if let _ = scanner.scanCharacters(from: CharacterSet(charactersIn: " \n") ) {
 								if !buffer.isEmpty {
@@ -89,7 +98,7 @@ struct Lexer {
 							}
 							break
 						} else {
-							// The quote mark is escaped. Continue.
+							// The quotation mark is escaped. Continue parsing.
 							scanner.currentIndex = str.index(after: scanner.currentIndex)
 							buffer.remove(at: buffer.index(before: buffer.endIndex))
 							buffer.append(quote)
@@ -342,7 +351,7 @@ struct Parser {
 
 	func parse() throws -> ParseResult {
 		let command = self.command.trimmingCharacters(in: CharacterSet.whitespaces)
-		// Handle line continuation characters (\) followed by whitespace/newlines
+		// Handle line continuation characters (\) followed by whitespace or newlines.
 		let processedCommand = Self.removeLineContinuations(from: command)
 		let slices = Lexer.tokenize(processedCommand)
 		let options = try Lexer.convertTokensToOptions(slices)
@@ -350,18 +359,18 @@ struct Parser {
 		return result
 	}
 	
-	/// Removes line continuation characters (\) followed by whitespace/newlines
+	/// Removes line continuation characters (\) followed by whitespace or newlines.
 	private static func removeLineContinuations(from command: String) -> String {
-		// Replace backslash followed by whitespace and newlines with a single space
+		// Replace a backslash followed by whitespace or newlines with a single space.
 		let pattern = "\\\\\\s*\\n"
 		do {
 			let regex = try NSRegularExpression(pattern: pattern, options: [])
 			let range = NSRange(location: 0, length: command.utf16.count)
 			let result = regex.stringByReplacingMatches(in: command, options: [], range: range, withTemplate: " ")
-			// Clean up extra spaces
+			// Clean up any extra spaces.
 			return result.replacingOccurrences(of: "  +", with: " ", options: .regularExpression)
 		} catch {
-			// If regex fails, just return the original command
+			// If the regular expression fails, return the original command.
 			return command
 		}
 	}
